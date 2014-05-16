@@ -24,8 +24,9 @@ SRC=src
 # default option to make will print description 
 default : description
 
-asd:
-	echo $(CFLAGS)
+# DEVELOP PURPOSE ONLY! remove when finish.
+zip:
+	# TODO make the tar.gz with all the necessary to deploy
 
 # print the description project and all the make targets
 description:
