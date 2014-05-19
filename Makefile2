@@ -1,0 +1,34 @@
+#AUTORI:
+#Federica Lago 157955
+#Andrea Ghizzoni 157507
+#PROGETTO: #1 CODEC
+#CORSO: Sistemi Operativi, anno 2014
+
+.SILENT:clear bin res
+
+DESCR = 'Questo progetto permette ad un processo di richiedere dei servizi ad un client, quali la codifica di un messaggio, la visualizzazione di tutti i messaggi codificati e la decodifica di un messaggio precedentemente codificato.'
+TARGETS = 'I target disponibili sono BIN, che genera i binari compilati eseguibili, ASSETS, che genera dei possibili input e CLEAN, che viene richiamato automaticamente ed elimina i contenuti automaticamente generati. È inoltre possibile usare il target TEST per richiamare automaticamente i precedenti target ed avviare l''applicazione.'
+
+all: clear info
+
+#Stampo a video la presentazione e richiedo all'utente di scegliere la prossima operazione
+info:
+	@echo $(DESCR)
+	@echo
+	@echo $(TARGETS)
+
+#Crea la cartella dei binari e compila
+bin: 	
+	mkdir -p bin
+	@echo cartella creata
+
+res:
+	mkdir -p assets
+	@echo cartella creata
+
+clear:
+	rm -f -r bin assets
+
+test:
+	bin res
+	@echo cartelle create, inizio il a testare
