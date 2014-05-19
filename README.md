@@ -2,4 +2,5 @@
 Authors:
 
 -   Andrea Ghizzoni
+-   Federica Lago
 
