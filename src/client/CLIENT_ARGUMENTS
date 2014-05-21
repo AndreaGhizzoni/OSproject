@@ -1,0 +1,8 @@
+CLIENT ARGUMENTS:
+- nome del servizio a cui collegarsi ( -name ex )
+- chiave di codifica/decodifica ( -key ciao )
+- specifica se l'input avviene da file ( -file a.txt )      | una di queste deve 
+- specifica il messaggio da codificare ( -message asdasd )  | essere specificata
+- specifica se l'output avviene su file ( -output o.txt ), se non e' specificato 
+  il file di output viene creato un file di default ( -output ), se questa opzione 
+  non e' presente stampiamo a console

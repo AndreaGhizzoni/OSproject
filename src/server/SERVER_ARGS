@@ -1,0 +1,5 @@
+SERVER ARGUMENTS:
+- nome del servizio ( -name ex )
+- lunghezza massima della chiave ( -msgmax 10 )
+- lunghezza massima-minima della chiave ( -keymin 1 -keymax 10 )
+
