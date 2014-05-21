@@ -6,3 +6,4 @@ CLIENT ARGUMENTS:
 - specifica se l'output avviene su file ( -output o.txt ), se non e' specificato 
   il file di output viene creato un file di default ( -output ), se questa opzione 
   non e' presente stampiamo a console
+-encode/decode
