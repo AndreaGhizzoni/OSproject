@@ -16,7 +16,7 @@ YEAR: 2014
 
 #include <ctype.c>
 
-#define OUTPUT_FILE "_output.txt"
+#define OUTPUT_FILE "output.txt"
 
 typedef struct{
     char* nameServer; 	//MANDATORY
@@ -28,49 +28,24 @@ typedef struct{
     int encode;			//MANDATORY
 } Client_args;
 
+Client_args* alloc();
+
 /********************************
 *								*
 *			SETTERS				*
 *								*
 ********************************/
 
-void setName(Client_args* c, char* value) {
-	c.name=value;
-}
+void setName(Client_args*, char*);
 
-void setKey(Client_args* c, char* value) {
-	int i=0;
-	while ((*value)[i]) {
-		if (!isalpha((*value)[i]))
-			return;
-		i++;
-	}
-	c.name=value;
-}
+void setKey(Client_args*, char*);
 
-void setisFile(Client_args* c, int isFile) {
-	c.isFile=isFile;
-}
+void setisFile(Client_args*, int);
 
-void setFileName(Client_args* c, char* value) {
-	c.name=value;
-}
+void setFileName(Client_args*, char*);
 
-void setMessage(Client_args* c, char* value) {
-	c.message=value;
-}
+void setMessage(Client_args*, char*);
 
-void setOutput(Client_args* c, char* value) {
-	if (value==NULL) {
-		c.output=OUTPUT_FILE;
-	}
-	else {
-		//controllo se è un nome di file valido
-		c.output=value;
-	}
-}
+void setOutput(Client_args*, char*);
 
-int setEncode (Client_args* c, int value) {
-	c.encode=value;
-	return 0;
-}
+int setEncode (Client_args*, int);
