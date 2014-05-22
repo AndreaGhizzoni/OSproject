@@ -37,24 +37,33 @@ int populate(Server_args* s, int argc, char** argv){
         }
         
         if(strcmp(argv[i], "-msgmax") == 0){
-            /*TODO check if argv[++i] is a number*/
-            r = set_msgmax(s, atoi(argv[++i]));
-            if(r != 0)
-                return r;
+            if( is_a_number(argv[++i]) == -1 ){
+                return ERR_ARGUMENT_MALFORMED;
+            }else{
+                r = set_msgmax(s, atoi(argv[++i]));
+                if(r != 0)
+                    return r;
+            }
         }
 
         if(strcmp(argv[i], "-keymin") == 0){
-            /*TODO check if argv[++i] is a number*/
-            r = set_keymin(s, atoi(argv[++i]));
-            if(r != 0)
-                return r;
+            if( is_a_number(argv[++i]) == -1 ){
+                return ERR_ARGUMENT_MALFORMED;
+            }else{
+                r = set_keymin(s, atoi(argv[++i]));
+                if(r != 0)
+                    return r;
+            }
         }
 
         if(strcmp(argv[i], "-keymax") == 0){
-            /*TODO check if argv[++i] is a number*/
-            r = set_keymax(s, atoi(argv[++i]));
-            if(r != 0)
-                return r;
+            if( is_a_number(argv[++i]) == -1 ){
+                return ERR_ARGUMENT_MALFORMED;
+            }else{
+                r = set_keymax(s, atoi(argv[++i]));
+                if(r != 0)
+                    return r;
+            }
         }
     }
 
@@ -108,4 +117,12 @@ int is_parameter(char* s){
         return 0;
     else
         return -1;
+}
+
+int is_a_number(char* s){
+    int num = atoi(s);
+    if (num == 0 && s[0] != '0')
+       return -1; 
+    else
+       return num;
 }

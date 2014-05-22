@@ -64,6 +64,11 @@ int set_keymax(Server_args*, int);
 int is_parameter(char*);
 
 /**
+ * return -1 if char* is a invalid number, otherwise the atoi(char*) 
+ */
+int is_a_number(char*);
+
+/**
  * Textual representation of type Server_args
  */
 void print(Server_args*);
