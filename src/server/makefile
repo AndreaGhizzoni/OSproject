@@ -35,5 +35,6 @@ dep: $(SRC)
 	$(GCC) $(CFLAGS) -c $^
 
 server: dep
-	@echo "TODO"
+	$(GCC) $(CFLAGS) server.c -o server $(wildcard *.o)
+
 

@@ -19,7 +19,7 @@
 #define ERR_MSGMAX_MALFORMED -3
 #define ERR_KEYMIN_MALFORMED -4
 #define ERR_KEYMAX_MALFORMED -5
-#define ERR_ARGUMENT_MALFORMED -6
+#define ERR_ARGUMENTS_MALFORMED -6
 
 typedef struct {
     char* name; /*must to be set from sh*/
@@ -54,12 +54,12 @@ int set_msgmax(Server_args*, int);
 int set_keymin(Server_args*, int);
 
 /**
- * Set the name of server_args with the char* given
+ * Set the maximum length of key that server can recive 
  */
 int set_keymax(Server_args*, int);
 
 /**
- * Set the name of server_args with the char* given
+ * return 0 if char* given is a command line argument, otherwise -1
  */
 int is_parameter(char*);
 

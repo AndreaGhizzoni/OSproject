@@ -28,39 +28,39 @@ int populate(Server_args* s, int argc, char** argv){
 
     for(i=1; i<argc; i++){
         if(is_parameter(argv[i+1]) == 0)
-            return ERR_ARGUMENT_MALFORMED;
+            return ERR_ARGUMENTS_MALFORMED;
 
         if(strcmp(argv[i], "-name") == 0){
-            r = set_name(s, argv[++i]);
+            r = set_name(s, argv[i+1]);
             if(r != 0)
                 return r;
         }
         
         if(strcmp(argv[i], "-msgmax") == 0){
-            if( is_a_number(argv[++i]) == -1 ){
-                return ERR_ARGUMENT_MALFORMED;
+            if( is_a_number(argv[i+1]) == -1 ){
+                return ERR_ARGUMENTS_MALFORMED;
             }else{
-                r = set_msgmax(s, atoi(argv[++i]));
+                r = set_msgmax(s, atoi(argv[i+1]));
                 if(r != 0)
                     return r;
             }
         }
 
         if(strcmp(argv[i], "-keymin") == 0){
-            if( is_a_number(argv[++i]) == -1 ){
-                return ERR_ARGUMENT_MALFORMED;
+            if( is_a_number(argv[i+1]) == -1 ){
+                return ERR_ARGUMENTS_MALFORMED;
             }else{
-                r = set_keymin(s, atoi(argv[++i]));
+                r = set_keymin(s, atoi(argv[i+1]));
                 if(r != 0)
                     return r;
             }
         }
 
         if(strcmp(argv[i], "-keymax") == 0){
-            if( is_a_number(argv[++i]) == -1 ){
-                return ERR_ARGUMENT_MALFORMED;
+            if( is_a_number(argv[i+1]) == -1 ){
+                return ERR_ARGUMENTS_MALFORMED;
             }else{
-                r = set_keymax(s, atoi(argv[++i]));
+                r = set_keymax(s, atoi(argv[i+1]));
                 if(r != 0)
                     return r;
             }
