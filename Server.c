@@ -1,12 +1,10 @@
-using namespace std;
-
-#include <iostream>
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
 /* in c metto le posizioni nell'alfabeto
  di ciascuna lettera (minuscola) che compone la chiave*/
-void convertkey(int *c, char chiave[]) {
+void convertkey(int *c, char* chiave) {
 	int i=0;
 	while (chiave[i]) {
         if (isupper(chiave[i])) {
@@ -18,7 +16,7 @@ void convertkey(int *c, char chiave[]) {
 }
 
 /*funzione che codifica il messaggio*/
-void encode(char chiave[], char message[]) {
+void encode(char* chiave, char* message) {
 	int len=strlen(chiave);
 	int c[len];
 	convertkey(c, chiave);
@@ -56,7 +54,7 @@ void encode(char chiave[], char message[]) {
 	}
 }
 
-void decode(char chiave[], char message[]) {
+void decode(char* chiave, char* message ){
 	int len=strlen(chiave);
 	int c[len];
 	convertkey(c, chiave);
@@ -94,15 +92,15 @@ void decode(char chiave[], char message[]) {
 	}
 }
 
-int main () {
+int main(int argc, char** argv) {
 	char chiave[]= "CiB";
 	char message[]= "DkBD";
 	decode(chiave, message);
 	int i=0;
 	while (message[i]) {
-		cout<<message[i];
+        printf("%c", message[i]);
 		i++;
 	}
-	cout<<endl;
+    printf("\n");
 	return 0;
 }
