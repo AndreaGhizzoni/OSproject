@@ -54,7 +54,7 @@ int populate(Server_args* s, int argc, char** argv){
     return 0;
 }
 
-int set_name(Server_args* s, char* name){
+int set_nameServer(Server_args* s, char* name){
     if(name == NULL)
         return ERR_NAME_NULL;
     if(name[0] == '-' )
