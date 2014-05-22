@@ -28,8 +28,12 @@ default: description
 
 description:
 	echo "Makefile to compile all the server dep. Usage:"
-	echo "> make server -> to compile all the server dep."
+	echo "> make dep    -> to compile all the server dep."
+	echo "> make server -> to compile the server with all the dep."
 
-server: $(SRC)
+dep: $(SRC)
 	$(GCC) $(CFLAGS) -c $^
+
+server: dep
+	@echo "TODO"
 
