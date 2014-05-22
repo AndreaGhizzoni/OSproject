@@ -26,7 +26,7 @@ int populate(Server_args* s, int argc, char** argv){
     if(s == NULL)
         s = alloc();
 
-    for(i=1; i<argc; i++){
+    for(i=1; i<argc-1; i++){
         if(is_parameter(argv[i+1]) == 0)
             return ERR_ARGUMENTS_MALFORMED;
 
@@ -74,7 +74,7 @@ int populate(Server_args* s, int argc, char** argv){
     return 0;
 }
 
-int set_nameServer(Server_args* s, char* name){
+int set_name(Server_args* s, char* name){
     if(name == NULL)
         return ERR_NAME_NULL;
     if(name[0] == '-' )
