@@ -22,59 +22,17 @@ Client_args* alloc() {
 
 void read_args(Client_args* c, int argc, char** argv) {
 	int i=1;
-	char* comand;
-	char* value;
+	char* comand="";
+	char* value="";
 	while (i<argc) {
 		comand=argv[i];
 		i++;
 		while ((i<argc)&&(argv[i][0]!='-')) {
-			value=strcat(value, argv[i]);							
+			strcat(value, argv[i]);							
 			i++;
 		}
 		set_values(c, comand, value);
 	}
-}
-
-void setNameServer(Client_args* c, char* value) {
-	c->nameServer=value;
-}
-
-void setKey(Client_args* c, char* value) {
-	int i=0;
-	while (value[i]) {
-		if (!isalpha(value[i]))
-			return;
-		i++;
-	}
-	c->nameServer=value;
-}
-
-void setisFile(Client_args* c, int isFile) {
-	c->isFile=isFile;
-}
-
-void setFileName(Client_args* c, char* value) {
-	c->fileName=value;
-}
-
-void setMessage(Client_args* c, char* value) {
-	c->message=value;
-}
-
-void setOutput(Client_args* c, char* value) {
-	char* clientName;
-	if (!value) {
-		clientName=strcat(clientName, OUTPUT_FILE);
-		c->output=clientName;
-	}
-	else {
-		c->output=value;
-	}
-}
-
-int setOp (Client_args* c, int value) {
-	c->op=value;
-	return 0;
 }
 
 int set_values(Client_args* c, char* comand, char* value) {
@@ -106,5 +64,49 @@ int set_values(Client_args* c, char* comand, char* value) {
 	}
 	else return -1;
 
+	return 0;
+}
+
+void setNameServer(Client_args* c, char* value) {
+	c->nameServer=value;
+}
+
+void setKey(Client_args* c, char* value) {
+	int i=0;
+	while (value[i]) {
+		if (!isalpha(value[i]))
+			return;
+		i++;
+	}
+	c->nameServer=value;
+}
+
+void setisFile(Client_args* c, int isFile) {
+	c->isFile=isFile;
+}
+
+void setFileName(Client_args* c, char* value) {
+	c->fileName=value;
+}
+
+void setMessage(Client_args* c, char* value) {
+	c->message=value;
+}
+
+void setOutput(Client_args* c, char* value) {
+	char* def = "test1"; /*TODO va cambiato */
+	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(OUTPUT_FILE)));
+	if( value == NULL ) {
+		strcat(cn, def );
+		strcat(cn, OUTPUT_FILE);
+		c->output=cn;
+	}
+	else {
+		c->output=value;
+	}
+}
+
+int setOp (Client_args* c, int value) {
+	c->op=value;
 	return 0;
 }

@@ -23,7 +23,6 @@ int main(int argc, char** argv) {
 	Client_args* c =alloc();
 	read_args(c, argc, argv);
 
-	/*TEST ----> TO DELETE*/
 	printf ("server name: %s \n", c->nameServer);
 	printf ("server name: %c \n", c->isFile);
 	printf ("server name: %s \n", c->fileName);
@@ -31,10 +30,8 @@ int main(int argc, char** argv) {
 	printf ("server name: %s \n", c->output);
 	printf ("server name: %c \n", c->op);
 
-	if ((nameServer==NULL)||((fileName==NULL)&&(message==NULL))||(op=NULL)) {
-		return -1;
-	}
-	/*if the server exits i ask it to encode/decode/print*/
+	/*if the server exits i ask it to encode/decode/print
+	if output=file then i put i write it on the file*/
 
 	return 0;
 }

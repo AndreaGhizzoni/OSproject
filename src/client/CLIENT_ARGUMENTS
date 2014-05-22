@@ -7,4 +7,4 @@ CLIENT ARGUMENTS:
   il file di output viene creato un file di default ( -output ), se questa opzione 
   non e' presente stampiamo a console
 - un client puo' richiedere al server di codificare ( -encode ), decodificare 
-  ( -decode ) o ricevere tutti i messaggi codificati/decodificati fino ad ora ( -list )
+  ( -decode ) o ricevere tutti i messaggi codificati fino ad ora ( -list )

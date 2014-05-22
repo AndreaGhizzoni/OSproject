@@ -24,6 +24,7 @@ typedef struct{
     int op;
 } Client_args;
 
+/*Alloca la struttura Client_args*/
 Client_args* alloc();
 
 /*Legge i parametri che il client riceve in ingresso*/
