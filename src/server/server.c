@@ -5,6 +5,7 @@
 void parse_args(int, char**);
 
 int main(int argc, char** argv){
+    parse_args(argc, argv);
 
     return 0;
 }
@@ -12,6 +13,9 @@ int main(int argc, char** argv){
 void parse_args(int argc, char** argv){
     int err;
     Server_args* sargs = alloc();
-    err = populate( sargs, argc, argv );
-    
+    err = populate(sargs, argc, argv);
+    if(err==0)
+        print(sargs);
+    else
+        printf("%d\n",err);
 }
