@@ -22,9 +22,9 @@ static struct option long_options[]={
     {"encode", required_argument, 0, 'e'},
     {"decode", required_argument, 0, 'd'},
     {"list", required_argument, 0, 'l'},
-    {0,0,0,0,0,0,0,0, 0}															/* OR IS IT RIGHT {0,0,0,0,0,0}*/
+    {0,0,0,0,0,0,0,0}															/* OR IS IT RIGHT {0,0,0,0,0,0}*/
 };
-const char* shortopts = "n:fmoedl";													/* FOR SERVER WAS "n:kKM"*/
+const char* shortopts = "n:kfmoedl";													/* FOR SERVER WAS "n:kKM"*/
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -64,22 +64,22 @@ Client_args* populate(int argc, char** argv){
                 if(is_parameter(optarg) == 0 )
                     print_err(&err, "'--name'", "invalid");
                 else
-                    s->nameServer = optarg;
+                    c->nameServer = optarg;
                 break;
 
             case 'k':
                 if((is_parameter(optarg) == 0 )||(checkKey(optarg) == -1))
                     print_err(&err, "'--key'", "invalid");
                 else
-                    s->key = optarg;
+                    c->key = optarg;
                 break;
 
             case 'f':
                 if((is_parameter(optarg) == 0 )||(c->message!=NULL))
                     print_err(&err, "'--file'", "invalid");
                 else {
-                    s->file = optarg;
-                    s->isFile = 1;
+                    c->fileName = optarg;
+                    c->isFile = 1;
                 }
                 break;
 
@@ -87,37 +87,38 @@ Client_args* populate(int argc, char** argv){
                 if((is_parameter(optarg) == 0 )||(c->fileName!=NULL))
                     print_err(&err, "'--message'", "invalid");
                 else {
-                    s->file = optarg;
-                    s->isFile = 0;
+                    c->message = optarg;
+                    c->isFile = 0;
                 }
                 break;
 
             case 'o':
-                if((is_parameter(optarg) == 0 )
-                    setDefaultOutputFile();
-                else			
-                    s->key = optarg;
+                if(is_parameter(optarg) == 0 )
+                	print_err(&err, "'--output'", "invalid");
+                else	
+                	/*ADD setDefaultOutputFile(); */		
+                    c->output = optarg;
                 break;
 
             case 'e':
-                if((is_parameter(optarg) == 0 )
+                if(is_parameter(optarg) == 0 )
                     print_err(&err, "'--encode'", "invalid");
                 else
-                    s->op = 0;
+                    c->op = ENCODE;
                 break;
 
             case 'd':
-                if((is_parameter(optarg) == 0 )
+                if(is_parameter(optarg) == 0 )
                     print_err(&err, "'--decode'", "invalid");
                 else
-                    s->op = 1;
+                    c->op = DECODE;
                 break;
 
             case 'l':
-                if((is_parameter(optarg) == 0 )
+                if(is_parameter(optarg) == 0 )
                     print_err(&err, "'--decode'", "invalid");
                 else
-                    s->op = -1;
+                    c->op = LIST;
                 break;
 
             case '?':
@@ -133,10 +134,10 @@ Client_args* populate(int argc, char** argv){
     if(err == -1)
         return NULL;
     else
-        return s;
+        return c;
 }
 
-void checkKey(char* key) {
+int checkKey(char* key) {
 	int i=0;
 	while (key[i]) {
 		if (!isalpha(key[i]))
@@ -146,11 +147,11 @@ void checkKey(char* key) {
 	return 0;
 }
 
-void setDefaultOutputFile() {
+void setDefaultOutputFile(Client_args* c) {
 	char* def = "test1"; 													/*TODO va cambiato */
-	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(OUTPUT_FILE)));
+	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(D_OUTPUT_FILE)));
 	strcat(cn, def );
-	strcat(cn, OUTPUT_FILE);
+	strcat(cn, D_OUTPUT_FILE);
 	c->output=cn;
 }
 
@@ -174,10 +175,13 @@ void print_err(int* err, char* from, char* msg){
     *err=-1;
 }
 
-void print(Server_args* s){
+void print(Client_args* c){
     printf("Server arguments:\n");
-    printf("-name: %s\n", s->name);
-    printf("-msgmax: %d\n", s->msgmax);
-    printf("-keymin: %d\n", s->keymin);
-    printf("-keymax: %d\n", s->keymax);
+    printf("-name: %s\n", c->nameServer);
+    printf("-key: %s\n", c->key);
+    printf("isFile: %d\n", c->isFile);
+    printf("-file: %s\n", c->fileName);
+    printf("-message: %s\n", c->message);
+    printf("-output: %s\n", c->output);
+    printf("operation: %d\n", c->op);
 }

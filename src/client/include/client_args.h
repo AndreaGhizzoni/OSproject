@@ -21,6 +21,9 @@
 /*Definizione variabili*/
 #define D_OUTPUT_FILE "output.txt"
 #define D_INT_VALUE -2
+#define ENCODE 0
+#define DECODE 1
+#define LIST -1
 
 typedef struct{
     char* nameServer; /*must be setted*/
@@ -40,13 +43,13 @@ Client_args* alloc();
  * TODO modify docs
  * Populate a server_args given with the command line input in argv
  */
-Server_args* populate(int, char**);
+Client_args* populate(int, char**);
 
 /*Checks if char* is a valid key, only made of letters*/
-void checkKey(char*);
+int checkKey(char*);
 
 /*Sets the default name for the output file*/
-void setDefaultOutputFile();
+void setDefaultOutputFile(Client_args*);
 
 /*return 0 if char* given is a command line argument, otherwise -1 */
 int is_parameter(char*);
@@ -58,8 +61,8 @@ void print_usage();
 /*Print the error just in case server arguments is like '--name --keymax 1 ..' */
 void print_err(int*, char*, char*); 
 
-/*Textual representation of type Server_args*/
-void print(Server_args*);
+/*Textual representation of type Client_args*/
+void print(Client_args*);
 
 #endif
 
