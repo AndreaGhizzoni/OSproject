@@ -9,7 +9,11 @@ YEAR: 2014
 #ifndef CLIENT_ARGS
 #define CLIENT_ARGS
 
+/*Definizione variabili*/
 #define OUTPUT_FILE "output.txt"
+#define null -2
+
+/*Definizione errori*/
 #define ERR_WRONG_ARGUMENTS -2;
 
 typedef struct{

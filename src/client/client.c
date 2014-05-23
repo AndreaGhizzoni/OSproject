@@ -13,9 +13,17 @@ int main(int argc, char** argv) {
 	Client_args* c =alloc();
 	read_args(c, argc, argv);
 
-	if ((nameServer==NULL)||((fileName==NULL)&&(message==NULL))||(op==NULL)) {
+	printf("server name %s\n", c->nameServer);
+	printf("server name %d\n", c->isFile);
+	printf("server name %s\n", c->fileName);
+	printf("server name %s\n", c->message);
+	printf("server name %s\n", c->output);
+	printf("server name %d\n", c->op);
+
+
+	/*if ((c.nameServer==NULL)||((c.fileName==NULL)&&(c.message==NULL))||(c.op==NULL)) {
 		return -1;
-	}
+	}		TO FIX */
 	
 	/*find_client(); -->inserisco l'id del server
 	if (find_client(nameServer)==NULL)
