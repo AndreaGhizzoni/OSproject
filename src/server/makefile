@@ -20,9 +20,10 @@ CFLAGS=-Wall -Werror -ansi -pedantic -faggressive-loop-optimizations -O2 \
 	   -Wunreachable-code
 
 SRC=$(wildcard include/*.c)
+OBJS=$(shell ls | grep *.o)
 
-.SILENT: description
-.PHONY: description
+.SILENT: description clear
+.PHONY: description clear
 
 default: description
 
@@ -30,11 +31,14 @@ description:
 	echo "Makefile to compile all the server dep. Usage:"
 	echo "> make dep    -> to compile all the server dep."
 	echo "> make server -> to compile the server with all the dep."
+	echo "> make clear  -> clear all objects file in root directory"
+
+clear:
+	$(RM) $(OBJS)
 
 dep: $(SRC)
 	$(GCC) $(CFLAGS) -c $^
 
-server: dep
-	$(GCC) $(CFLAGS) server.c -o server $(wildcard *.o)
-
+server: clear dep
+	$(GCC) $(CFLAGS) server.c -o server $(OBJS)
 
