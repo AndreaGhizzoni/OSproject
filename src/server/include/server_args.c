@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <getopt.h>
 
 Server_args* alloc(){
     Server_args* s = malloc( sizeof(Server_args) );
@@ -20,96 +21,77 @@ Server_args* alloc(){
     return s;
 }
 
-int populate(Server_args* s, int argc, char** argv){
-    int i, r;
+static struct option long_options[]={
+    {"name"  , required_argument, 0, 'n'},
+    {"keymax", required_argument, 0, 'K'},
+    {"keymin", required_argument, 0, 'k'},
+    {"msgmax", required_argument, 0, 'M'},
+    {0,0,0,0}
+};
+const char* shortopts = "n:kKM";
 
-    if(s == NULL)
-        s = alloc();
+Server_args* populate(int argc, char** argv){
+    int c, keymin, keymax, msgmax, err;
+    int option_index = 0; /*getopt_long stores the option index here. */
+    Server_args* s;
+    
+    /*if argc == 1 means that --name||-n is missing*/
+    if(argc==1){
+        print_usage();
+        return NULL;
+    }
 
-    for(i=1; i<argc-1; i++){
-        if(is_parameter(argv[i+1]) == 0)
-            return ERR_ARGUMENTS_MALFORMED;
+    s = alloc();
+    err=0;
 
-        if(strcmp(argv[i], "-name") == 0){
-            r = set_name(s, argv[i+1]);
-            if(r != 0)
-                return r;
-        }
-        
-        if(strcmp(argv[i], "-msgmax") == 0){
-            if( is_a_number(argv[i+1]) == -1 ){
-                return ERR_ARGUMENTS_MALFORMED;
-            }else{
-                r = set_msgmax(s, atoi(argv[i+1]));
-                if(r != 0)
-                    return r;
-            }
-        }
+    while(1){
+        c = getopt_long( argc, argv, shortopts, long_options, &option_index );
 
-        if(strcmp(argv[i], "-keymin") == 0){
-            if( is_a_number(argv[i+1]) == -1 ){
-                return ERR_ARGUMENTS_MALFORMED;
-            }else{
-                r = set_keymin(s, atoi(argv[i+1]));
-                if(r != 0)
-                    return r;
-            }
-        }
+        if( c == -1 || err == -1 ) break;
 
-        if(strcmp(argv[i], "-keymax") == 0){
-            if( is_a_number(argv[i+1]) == -1 ){
-                return ERR_ARGUMENTS_MALFORMED;
-            }else{
-                r = set_keymax(s, atoi(argv[i+1]));
-                if(r != 0)
-                    return r;
-            }
+        switch(c){
+            case 'n':
+                if(is_parameter(optarg) == 0 )
+                    print_err(&err, "'--name'", "invalid");
+                else
+                    s->name = optarg;
+                break;
+            case 'K':
+                if(is_parameter(optarg) == 0 ||
+                  ((keymax = is_a_number(optarg)) == -1 ))
+                    print_err(&err, "'--keymax'", "invalid");
+                else
+                    s->keymax = keymax;
+                break;
+            case 'k':
+                if(is_parameter(optarg) == 0 || 
+                  ((keymin = is_a_number(optarg)) == -1 ))
+                    print_err(&err, "'--keymin'", "invalid");
+                else
+                    s->keymin = keymin;
+                break;
+            case 'M':
+                if(is_parameter(optarg) == 0 ||
+                  ((msgmax = is_a_number(optarg)) == -1 ))
+                    print_err(&err, "'--msgmax'", "invalid");
+                else
+                    s->msgmax = msgmax;
+                break;
+
+            case '?':
+                err=-1;
+                /*getopt_long already printed an error message.*/
+                break;
+
+            default:
+                abort();
         }
     }
 
-    /*if here s->name still == NULL, in args there isn't -name set*/
-    if(s->name == NULL)
-        return ERR_NAME_MISSING;
-
-    return 0;
-}
-
-int set_name(Server_args* s, char* name){
-    if(name == NULL)
-        return ERR_NAME_NULL;
-    if(name[0] == '-' )
-        return ERR_NAME_MALFORMED;
-    s->name = name;
-    return 0;
-}
-
-int set_msgmax(Server_args* s, int msgmax){
-    if(msgmax <= 0)
-        return ERR_MSGMAX_MALFORMED;
-    s->msgmax = msgmax;
-    return 0;
-}
-
-int set_keymin(Server_args* s, int keymin){
-    if(keymin <= 0 || keymin >= s->keymax)
-        return ERR_KEYMIN_MALFORMED; 
-    s->keymin = keymin;
-    return 0;
-}
-
-int set_keymax(Server_args* s, int keymax){
-    if(keymax <= 0 || keymax <= s->keymin)
-        return ERR_KEYMAX_MALFORMED;
-    s->keymax = keymax;
-    return 0;
-}
-
-void print(Server_args* s){
-    printf("Server arguments:\n");
-    printf("-name: %s\n", s->name);
-    printf("-msgmax: %d\n", s->msgmax);
-    printf("-keymin: %d\n", s->keymin);
-    printf("-keymax: %d\n", s->keymax);
+    if(err == -1)
+        return NULL;
+    else
+        return s;
 }
 
 int is_parameter(char* s){
@@ -126,3 +108,26 @@ int is_a_number(char* s){
     else
        return num;
 }
+
+void print_usage(){
+    printf("server --name string [--msgmax int] [--keymin int] [--keymax int]\n");
+    printf("-n --name : [MANDATORY] specify the name of the service\n");
+    printf("-K --keymax : specify the max length of the key that server can recive\n");
+    printf("-k --keymin : specify the min length of the key that server can recive\n");
+    printf("-M --msgmax : specify the max length of the message that server can recive\n");
+}
+
+void print_err(int* err, char* from, char* msg){
+    printf("error: value of %s is %s\n", from, msg);
+    *err=-1;
+}
+
+void print(Server_args* s){
+    printf("Server arguments:\n");
+    printf("-name: %s\n", s->name);
+    printf("-msgmax: %d\n", s->msgmax);
+    printf("-keymin: %d\n", s->keymin);
+    printf("-keymax: %d\n", s->keymax);
+}
+
+
