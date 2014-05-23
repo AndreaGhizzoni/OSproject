@@ -34,29 +34,10 @@ typedef struct {
 Server_args* alloc();
 
 /**
+ * TODO modify docs
  * Populate a server_args given with the command line input in argv
  */
-int populate(Server_args*, int, char**);
-
-/**
- * Set the name of server_args with the char* given
- */
-int set_name(Server_args*, char*);
-
-/**
- * Set the max length of message that server can recive
- */
-int set_msgmax(Server_args*, int);
-
-/**
- * Set the minimum length of key that server can recive
- */
-int set_keymin(Server_args*, int);
-
-/**
- * Set the maximum length of key that server can recive 
- */
-int set_keymax(Server_args*, int);
+Server_args* populate(int, char**);
 
 /**
  * return 0 if char* given is a command line argument, otherwise -1
@@ -72,5 +53,15 @@ int is_a_number(char*);
  * Textual representation of type Server_args
  */
 void print(Server_args*);
+
+/**
+ * Print the error just in case server arguments is like '--name --keymax 1 ..'
+ */
+void print_err(int*, char*, char*); 
+
+/**
+ * Print a description of server usage
+ */
+void print_usage();
 
 #endif
