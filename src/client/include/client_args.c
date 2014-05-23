@@ -1,121 +1,183 @@
-/*
-Andrea Ghizzoni 157507
-Federica Lago 157955
-PROJECT: #1 CODEC
-COURSE: Sistemi Operativi
-YEAR: 2014
-*/
+/* ============================== AUTHORS =====================================
+# Andrea Ghizzoni 157507
+# Federica Lago 157955
+# PROJECT: #1 CODEC
+# COURSE: Sistemi Operativi
+# YEAR: 2014
+=============================================================================*/
 
-#include <ctype.h>
+#include "client_args.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "client_args.h"
+#include <getopt.h>
+#include <ctype.h>
+
+static struct option long_options[]={
+    {"name"  , required_argument, 0, 'n'},
+    {"key"  , required_argument, 0, 'k'},
+    {"file", required_argument, 0, 'f'},
+    {"message", required_argument, 0, 'm'},
+    {"output", required_argument, 0, 'o'},
+    {"encode", required_argument, 0, 'e'},
+    {"decode", required_argument, 0, 'd'},
+    {"list", required_argument, 0, 'l'},
+    {0,0,0,0,0,0,0,0, 0}															/* OR IS IT RIGHT {0,0,0,0,0,0}*/
+};
+const char* shortopts = "n:fmoedl";													/* FOR SERVER WAS "n:kKM"*/
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
 	c->nameServer=NULL;
-	c->isFile=null;
+	c->key=NULL;
+	c->isFile=D_INT_VALUE;
 	c->fileName=NULL;
 	c->message=NULL;
 	c->output=NULL;
-	c->op=null;
+	c->op=D_INT_VALUE;
 
 	return c;	
 }
 
-void read_args(Client_args* c, int argc, char** argv) {
-	int i=1;
-	char* comand="";
-	char* value="";
-	while (i<argc) {
-		comand=argv[i];
-		printf("inside read_args %d\n", argc);
-		i++;
-		while ((i<argc)&&(argv[i][0]!='-')) {
-			printf("inside read_args %s\n", argv[i]);
-			strcat(value, argv[i]);	
-			printf("inside while \n");
-			i++;
-		}
-		printf("inside read_args %s\n", argv[i]);
-		set_values(c, comand, value);
-	}
+Client_args* populate(int argc, char** argv){
+    int a, err;
+    int option_index = 0; /*getopt_long stores the option index here. */
+    Client_args* c;
+    
+    /*if argc == 1 means that --name||-n is missing*/
+    if(argc==1){
+        print_usage();
+        return NULL;
+    }
+
+    c = alloc();
+    err=0;
+
+    while(1){
+        a = getopt_long( argc, argv, shortopts, long_options, &option_index );
+
+        if( a == -1 || err == -1 ) break;
+
+        switch(a){
+        	/*EDIT CASES*/
+            case 'n':
+                if(is_parameter(optarg) == 0 )
+                    print_err(&err, "'--name'", "invalid");
+                else
+                    s->nameServer = optarg;
+                break;
+
+            case 'k':
+                if((is_parameter(optarg) == 0 )||(checkKey(optarg) == -1))
+                    print_err(&err, "'--key'", "invalid");
+                else
+                    s->key = optarg;
+                break;
+
+            case 'f':
+                if((is_parameter(optarg) == 0 )||(c->message!=NULL))
+                    print_err(&err, "'--file'", "invalid");
+                else {
+                    s->file = optarg;
+                    s->isFile = 1;
+                }
+                break;
+
+            case 'm':
+                if((is_parameter(optarg) == 0 )||(c->fileName!=NULL))
+                    print_err(&err, "'--message'", "invalid");
+                else {
+                    s->file = optarg;
+                    s->isFile = 0;
+                }
+                break;
+
+            case 'o':
+                if((is_parameter(optarg) == 0 )
+                    setDefaultOutputFile();
+                else			
+                    s->key = optarg;
+                break;
+
+            case 'e':
+                if((is_parameter(optarg) == 0 )
+                    print_err(&err, "'--encode'", "invalid");
+                else
+                    s->op = 0;
+                break;
+
+            case 'd':
+                if((is_parameter(optarg) == 0 )
+                    print_err(&err, "'--decode'", "invalid");
+                else
+                    s->op = 1;
+                break;
+
+            case 'l':
+                if((is_parameter(optarg) == 0 )
+                    print_err(&err, "'--decode'", "invalid");
+                else
+                    s->op = -1;
+                break;
+
+            case '?':
+                err=-1;
+                /*getopt_long already printed an error message.*/
+                break;
+
+            default:
+                abort();
+        }
+    }
+
+    if(err == -1)
+        return NULL;
+    else
+        return s;
 }
 
-int set_values(Client_args* c, char* comand, char* value) {
-	printf("Inside set values %s\n", c->nameServer);
-	if (strcmp(comand,"-name")==0) {
-		setNameServer(c, value);
-	}
-	else if (strcmp(comand,"-key")==0) {
-		setKey(c, value);
-	}
-	else if ((strcmp(comand,"-file")==0)&&(c->message==NULL)) {
-		setFileName(c, value);
-		setisFile(c, 1);
-	}
-	else if ((strcmp(comand,"-message")==0)&&(c->fileName==NULL)) {
-		setMessage(c, value);
-		setisFile(c, 0);
-	}
-	else if (strcmp(comand,"-output")==0) {
-		setOutput(c, value);
-	}
-	else if ((strcmp(comand,"-encode")==0)&&(c->op==null)) {
-		setOp(c,0);
-	}
-	else if ((strcmp(comand,"-decode")==0)&&(c->op==null)) {
-		setOp(c, 1);
-	}
-	else if ((strcmp(comand,"-list")==0)&&(c->op==null)) {
-		setOp(c, -1);
-	}
-	else return ERR_WRONG_ARGUMENTS;
-
-	return 0;
-}
-
-void setNameServer(Client_args* c, char* value) {
-	c->nameServer=value;
-}
-
-void setKey(Client_args* c, char* value) {
+void checkKey(char* key) {
 	int i=0;
-	while (value[i]) {
-		if (!isalpha(value[i]))
-			return;
+	while (key[i]) {
+		if (!isalpha(key[i]))
+			return -1;
 		i++;
 	}
-	c->nameServer=value;
-}
-
-void setisFile(Client_args* c, int isFile) {
-	c->isFile=isFile;
-}
-
-void setFileName(Client_args* c, char* value) {
-	c->fileName=value;
-}
-
-void setMessage(Client_args* c, char* value) {
-	c->message=value;
-}
-
-void setOutput(Client_args* c, char* value) {
-	char* def = "test1"; /*TODO va cambiato */
-	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(OUTPUT_FILE)));
-	if( value == NULL ) {
-		strcat(cn, def );
-		strcat(cn, OUTPUT_FILE);
-		c->output=cn;
-	}
-	else {
-		c->output=value;
-	}
-}
-
-int setOp (Client_args* c, int value) {
-	c->op=value;
 	return 0;
+}
+
+void setDefaultOutputFile() {
+	char* def = "test1"; 													/*TODO va cambiato */
+	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(OUTPUT_FILE)));
+	strcat(cn, def );
+	strcat(cn, OUTPUT_FILE);
+	c->output=cn;
+}
+
+int is_parameter(char* s){
+    if(s[0]=='-')
+        return 0;
+    else
+        return -1;
+}
+
+void print_usage(){
+    printf("server --name string [--msgmax int] [--keymin int] [--keymax int]\n");
+    printf("-n --name : [MANDATORY] specify the name of the service\n");
+    printf("-K --keymax : specify the max length of the key that server can recive\n");
+    printf("-k --keymin : specify the min length of the key that server can recive\n");
+    printf("-M --msgmax : specify the max length of the message that server can recive\n");
+}
+
+void print_err(int* err, char* from, char* msg){
+    printf("error: value of %s is %s\n", from, msg);
+    *err=-1;
+}
+
+void print(Server_args* s){
+    printf("Server arguments:\n");
+    printf("-name: %s\n", s->name);
+    printf("-msgmax: %d\n", s->msgmax);
+    printf("-keymin: %d\n", s->keymin);
+    printf("-keymax: %d\n", s->keymax);
 }

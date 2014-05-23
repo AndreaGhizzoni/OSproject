@@ -1,63 +1,75 @@
-/*
-Andrea Ghizzoni 157507
-Federica Lago 157955
-PROJECT: #1 CODEC
-COURSE: Sistemi Operativi
-YEAR: 2014
-*/
+/* ============================== AUTHORS =====================================
+# Andrea Ghizzoni 157507
+# Federica Lago 157955
+# PROJECT: #1 CODEC
+# COURSE: Sistemi Operativi
+# YEAR: 2014
+=============================================================================*/
 
 #ifndef CLIENT_ARGS
 #define CLIENT_ARGS
 
-/*Definizione variabili*/
-#define OUTPUT_FILE "output.txt"
-#define null -2
-
 /*Definizione errori*/
-#define ERR_WRONG_ARGUMENTS -2;
+#define ERR_NAME_NULL -1
+#define ERR_NAME_MISSING -7
+#define ERR_NAME_MALFORMED -2
+#define ERR_MSGMAX_MALFORMED -3
+#define ERR_KEYMIN_MALFORMED -4
+#define ERR_KEYMAX_MALFORMED -5
+#define ERR_ARGUMENTS_MALFORMED -6
+
+/*Definizione variabili*/
+#define D_OUTPUT_FILE "output.txt"
+#define D_INT_VALUE -2
 
 typedef struct{
-    char* nameServer;
-    int isFile;
+    char* nameServer; /*must be setted*/
+    char* key; /*must be setted if op>=0 */
+    int isFile; 
     char* fileName;
     char* message;
     char* output;
-    int op;
+    int op;  /*must be !=-2 */
 } Client_args;
+
 
 /*Alloca la struttura Client_args*/
 Client_args* alloc();
 
-/*Legge i parametri che il client riceve in ingresso*/
-void read_args(Client_args*, int, char**);
+/**
+ * TODO modify docs
+ * Populate a server_args given with the command line input in argv
+ */
+Server_args* populate(int, char**);
 
-/*Passa i parametri in ingresso alle opportune set*/
-int set_values(Client_args*, char*, char*);
+/*Checks if char* is a valid key, only made of letters*/
+void checkKey(char*);
 
-/*Setta il nome del server nella struct Client_args*/
-void setNameServer(Client_args*, char*);
+/*Sets the default name for the output file*/
+void setDefaultOutputFile();
 
-/*Setta la chiave nella struct Client_args*/
-void setKey(Client_args*, char*);
+/*return 0 if char* given is a command line argument, otherwise -1 */
+int is_parameter(char*);
 
-/*Nella struct Client_args indica nel campo isFile
-  se in ingresso c'è un file (isFile=1) oppure
-  un messaggio di testo (isFile=0) */
-void setisFile(Client_args*, int);
 
-/*Setta il nome del file di input nella struct Client_args*/
-void setFileName(Client_args*, char*);
+/*Print a description of server usage */
+void print_usage();
 
-/*Setta il messaggio nella struct Client_args*/
-void setMessage(Client_args*, char*);
+/*Print the error just in case server arguments is like '--name --keymax 1 ..' */
+void print_err(int*, char*, char*); 
 
-/*Setta il nome del file di output nella struct Client_args*/
-void setOutput(Client_args*, char*);
-
-/*Nella struct Client_args indica nel campo op
-  se si vuole una codifica (op=0) oppure
-  una decodifica (op=1) o una lista delle codifice
-  avvenute su quel server (op=-1) */
-int setOp (Client_args*, int);
+/*Textual representation of type Server_args*/
+void print(Server_args*);
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
