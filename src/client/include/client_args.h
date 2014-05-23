@@ -1,8 +1,4 @@
-/********************************
-*								*
-*			AUTHORS				*
-*								*
-*********************************
+/*
 Andrea Ghizzoni 157507
 Federica Lago 157955
 PROJECT: #1 CODEC
@@ -14,6 +10,7 @@ YEAR: 2014
 #define CLIENT_ARGS
 
 #define OUTPUT_FILE "output.txt"
+#define ERR_WRONG_ARGUMENTS -2;
 
 typedef struct{
     char* nameServer;

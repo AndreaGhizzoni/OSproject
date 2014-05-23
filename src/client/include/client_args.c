@@ -1,8 +1,4 @@
-/********************************
-*								*
-*			AUTHORS				*
-*								*
-*********************************
+/*
 Andrea Ghizzoni 157507
 Federica Lago 157955
 PROJECT: #1 CODEC
@@ -17,6 +13,13 @@ YEAR: 2014
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
+	c.nameServer=NULL;
+	c.isFile=NULL;
+	c.fileName=NULL;
+	c.message=NULL;
+	c.output=NULL;
+	c.op=NULL;
+
 	return c;	
 }
 
