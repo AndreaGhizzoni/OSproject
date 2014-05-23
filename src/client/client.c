@@ -10,10 +10,7 @@
 
 int main(int argc, char** argv) {
 	Client_args* c =populate(argc, argv);
-    if(s==NULL)
-        exit(1);
-    else
-        print(s);
+    print(c);
 
 
 	/*if ((c.nameServer==NULL)||((c.fileName==NULL)&&(c.message==NULL))||(c.op==NULL)) {

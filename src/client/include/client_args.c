@@ -22,9 +22,9 @@ static struct option long_options[]={
     {"encode", required_argument, 0, 'e'},
     {"decode", required_argument, 0, 'd'},
     {"list", required_argument, 0, 'l'},
-    {0,0,0,0,0,0,0,0}															/* OR IS IT RIGHT {0,0,0,0,0,0}*/
+    {0,0,0,0}
 };
-const char* shortopts = "n:kfmoedl";													/* FOR SERVER WAS "n:kKM"*/
+const char* shortopts = "n:kfmoedl";													/*IS IT RIGHT????????*/
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -57,7 +57,6 @@ Client_args* populate(int argc, char** argv){
         a = getopt_long( argc, argv, shortopts, long_options, &option_index );
 
         if( a == -1 || err == -1 ) break;
-
         switch(a){
         	/*EDIT CASES*/
             case 'n':
@@ -96,7 +95,7 @@ Client_args* populate(int argc, char** argv){
                 if(is_parameter(optarg) == 0 )
                 	print_err(&err, "'--output'", "invalid");
                 else	
-                	/*ADD setDefaultOutputFile(); */		
+                																	/*ADD setDefaultOutputFile(); */		
                     c->output = optarg;
                 break;
 
