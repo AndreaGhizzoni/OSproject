@@ -12,19 +12,20 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <ctype.h>
+#include <unistd.h>
 
 static struct option long_options[]={
     {"name"  , required_argument, 0, 'n'},
     {"key"  , required_argument, 0, 'k'},
     {"file", required_argument, 0, 'f'},
     {"message", required_argument, 0, 'm'},
-    {"output", required_argument, 0, 'o'},
-    {"encode", required_argument, 0, 'e'},
-    {"decode", required_argument, 0, 'd'},
-    {"list", required_argument, 0, 'l'},
+    {"output", optional_argument, NULL, 'o'},
+    {"encode", no_argument, 0, 'e'},
+    {"decode", no_argument, 0, 'd'},
+    {"list", no_argument, 0, 'l'},
     {0,0,0,0}
 };
-const char* shortopts = "n:kfmoedl";													/*IS IT RIGHT????????*/
+const char* shortopts = "n:o::kfmedl";													/*IS IT RIGHT????????*/
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -55,7 +56,6 @@ Client_args* populate(int argc, char** argv){
 
     while(1){
         a = getopt_long( argc, argv, shortopts, long_options, &option_index );
-
         if( a == -1 || err == -1 ) break;
         switch(a){
         	/*EDIT CASES*/
@@ -92,32 +92,26 @@ Client_args* populate(int argc, char** argv){
                 break;
 
             case 'o':
-                if(is_parameter(optarg) == 0 )
-                	print_err(&err, "'--output'", "invalid");
-                else	
-                																	/*ADD setDefaultOutputFile(); */		
-                    c->output = optarg;
+                	if (optarg) {                                                  /*TO WORKING IF*/
+                        if(is_parameter(optarg) == 0 )
+                            print_err(&err, "'--output'", "invalid");
+                        else
+                            c->output = optarg;
+                    }
+                	else		
+                    	setDefaultOutputFile(c);
                 break;
 
             case 'e':
-                if(is_parameter(optarg) == 0 )
-                    print_err(&err, "'--encode'", "invalid");
-                else
-                    c->op = ENCODE;
+                c->op = ENCODE;
                 break;
 
             case 'd':
-                if(is_parameter(optarg) == 0 )
-                    print_err(&err, "'--decode'", "invalid");
-                else
-                    c->op = DECODE;
+                c->op = DECODE;
                 break;
 
             case 'l':
-                if(is_parameter(optarg) == 0 )
-                    print_err(&err, "'--decode'", "invalid");
-                else
-                    c->op = LIST;
+                c->op = LIST;
                 break;
 
             case '?':
@@ -152,6 +146,7 @@ void setDefaultOutputFile(Client_args* c) {
 	strcat(cn, def );
 	strcat(cn, D_OUTPUT_FILE);
 	c->output=cn;
+    printf("INSIDE SET \n");
 }
 
 int is_parameter(char* s){
@@ -175,7 +170,7 @@ void print_err(int* err, char* from, char* msg){
 }
 
 void print(Client_args* c){
-    printf("Server arguments:\n");
+    printf("CLient arguments:\n");
     printf("-name: %s\n", c->nameServer);
     printf("-key: %s\n", c->key);
     printf("isFile: %d\n", c->isFile);
