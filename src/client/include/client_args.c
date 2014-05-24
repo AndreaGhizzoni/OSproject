@@ -25,7 +25,7 @@ static struct option long_options[]={
     {"list", no_argument, 0, 'l'},
     {0,0,0,0}
 };
-const char* shortopts = "n:o::kfmedl";													/*IS IT RIGHT????????*/
+const char* shortopts = "n:o::kfmedl";
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -92,14 +92,10 @@ Client_args* populate(int argc, char** argv){
                 break;
 
             case 'o':
-                	if (optarg) {                                                  /*TO WORKING IF*/
-                        if(is_parameter(optarg) == 0 )
-                            print_err(&err, "'--output'", "invalid");
-                        else
-                            c->output = optarg;
-                    }
-                	else		
-                    	setDefaultOutputFile(c);
+                if (!optarg)
+                    setDefaultOutputFile(c);
+                else
+                    c->output = optarg;
                 break;
 
             case 'e':
@@ -141,12 +137,11 @@ int checkKey(char* key) {
 }
 
 void setDefaultOutputFile(Client_args* c) {
-	char* def = "test1"; 													/*TODO va cambiato */
-	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(D_OUTPUT_FILE)));
+    char* def = "test1"; 		                                             /*TODO: CHANGE WHIT CLIENT PID*/											
+	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(D_OUTPUT_FILE)+1));
 	strcat(cn, def );
 	strcat(cn, D_OUTPUT_FILE);
 	c->output=cn;
-    printf("INSIDE SET \n");
 }
 
 int is_parameter(char* s){
