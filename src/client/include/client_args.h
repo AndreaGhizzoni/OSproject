@@ -10,13 +10,7 @@
 #define CLIENT_ARGS
 
 /*Definizione errori*/
-#define ERR_NAME_NULL -1
-#define ERR_NAME_MISSING -7
-#define ERR_NAME_MALFORMED -2
-#define ERR_MSGMAX_MALFORMED -3
-#define ERR_KEYMIN_MALFORMED -4
-#define ERR_KEYMAX_MALFORMED -5
-#define ERR_ARGUMENTS_MALFORMED -6
+#define ERR_ARGUMENTS_MALFORMED -1
 
 /*Definizione variabili*/
 #define D_OUTPUT_FILE "output.txt"
@@ -63,6 +57,9 @@ void print_err(int*, char*, char*);
 
 /*Textual representation of type Client_args*/
 void print(Client_args*);
+
+/*Checks if all the required arguments are setted*/
+int check_arguments(Client_args*);
 
 #endif
 

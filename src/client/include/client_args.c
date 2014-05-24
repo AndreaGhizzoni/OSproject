@@ -174,3 +174,11 @@ void print(Client_args* c){
     printf("-output: %s\n", c->output);
     printf("operation: %d\n", c->op);
 }
+
+int check_arguments(Client_args* c) {
+    if (!c->nameServer || c->op==D_INT_VALUE || (c->op>=0 && (!c->key || c->isFile==D_INT_VALUE))) {
+        printf("ERROR!! Arguments malformed. \n");
+        return -1;
+    }
+    return 0;
+}
