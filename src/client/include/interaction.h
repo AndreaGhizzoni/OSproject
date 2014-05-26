@@ -11,16 +11,13 @@
 
 /*Definizione errori*/
 #define ERR_ARGUMENTS_MALFORMED -1
-#define ERR_UNKNOWN_SERVER -2
-#define ERR_UNABLE_TO_CONNECT -3
-
-#include "include/client_args.h"
+#define ERR_UNABLE_TO_CONNECT_TO_SERVER -2
 
 char* openClientFifo();
 
-int findServer(char*);
+char* findServer(char*);
 
-void send_request(char*, char*);
+void send_request(Client_args*, int);
 
 
 #endif
