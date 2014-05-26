@@ -32,10 +32,9 @@ void init_handler();
 int main(int argc, char** argv){
     Server* server;
     char* fifo_name;
+    if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
 
     init_handler();
-
-    if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
 
     server = alloc_server();
     server->args = parse_args(argc, argv);
