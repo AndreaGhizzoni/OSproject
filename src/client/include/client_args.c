@@ -15,17 +15,17 @@
 #include <unistd.h>
 
 static struct option long_options[]={
-    {"name"  , required_argument, 0, 'n'},
-    {"key"  , required_argument, 0, 'k'},
-    {"file", required_argument, 0, 'f'},
+    {"name"   , required_argument, 0, 'n'},
+    {"key"    , required_argument, 0, 'k'},
+    {"file"   , required_argument, 0, 'f'},
     {"message", required_argument, 0, 'm'},
-    {"output", optional_argument, NULL, 'o'},
-    {"encode", no_argument, 0, 'e'},
-    {"decode", no_argument, 0, 'd'},
-    {"list", no_argument, 0, 'l'},
+    {"output" , optional_argument, NULL, 'o'},
+    {"encode" , no_argument, 0, 'e'},
+    {"decode" , no_argument, 0, 'd'},
+    {"list"   , no_argument, 0, 'l'},
     {0,0,0,0}
 };
-const char* shortopts = "n:o::kfmedl";
+const char* shortopts = "n:o::k:f:m:edl";
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -45,7 +45,7 @@ Client_args* populate(int argc, char** argv){
     int option_index = 0; /*getopt_long stores the option index here. */
     Client_args* c;
     
-    /*if argc == 1 means that --name||-n is missing*/
+    /*if argc == 1 means that no argument passing*/
     if(argc==1){
         print_usage();
         return NULL;
@@ -58,24 +58,25 @@ Client_args* populate(int argc, char** argv){
         a = getopt_long( argc, argv, shortopts, long_options, &option_index );
         if( a == -1 || err == -1 ) break;
         switch(a){
-        	/*EDIT CASES*/
             case 'n':
-                if(is_parameter(optarg) == 0 )
-                    print_err(&err, "'--name'", "invalid");
+                if(is_parameter(optarg) == 0)
+                    print_err(&err, "'--name'", "is invalid");
                 else
                     c->nameServer = optarg;
                 break;
 
             case 'k':
-                if((is_parameter(optarg) == 0 )||(checkKey(optarg) == -1))
-                    print_err(&err, "'--key'", "invalid");
+                if(is_parameter(optarg) == 0)
+                    print_err(&err, "'--key'", "is invalid");
+                else if( checkKey(optarg) == -1 )
+                    print_err(&err, "'--key'", "can not contain numbers" );
                 else
                     c->key = optarg;
                 break;
 
             case 'f':
                 if((is_parameter(optarg) == 0 )||(c->message!=NULL))
-                    print_err(&err, "'--file'", "invalid");
+                    print_err(&err, "'--file'", "is invalid or '--message' is set");
                 else {
                     c->fileName = optarg;
                     c->isFile = 1;
@@ -84,7 +85,7 @@ Client_args* populate(int argc, char** argv){
 
             case 'm':
                 if((is_parameter(optarg) == 0 )||(c->fileName!=NULL))
-                    print_err(&err, "'--message'", "invalid");
+                    print_err(&err, "'--message'", "is invalid or '--file' is set");
                 else {
                     c->message = optarg;
                     c->isFile = 0;
@@ -92,22 +93,37 @@ Client_args* populate(int argc, char** argv){
                 break;
 
             case 'o':
-                if (!optarg)
-                    setDefaultOutputFile(c);
+                if(!optarg)
+                    set_default_outputFile(c);
                 else
                     c->output = optarg;
                 break;
 
             case 'e':
-                c->op = ENCODE;
+                if(c->op != D_INT_VALUE){
+                    printf("error: '--encode' could not be set: '--decode' or '--list' is already set");
+                    err=-1;
+                }else{
+                    c->op = ENCODE;
+                }
                 break;
 
             case 'd':
-                c->op = DECODE;
+                if(c->op != D_INT_VALUE){
+                    printf("error: '--decode' could not be set: '--encode' or '--list' is already set");
+                    err=-1;
+                }else{
+                    c->op = DECODE;
+                }
                 break;
 
             case 'l':
-                c->op = LIST;
+                if(c->op != D_INT_VALUE){
+                    printf("error: '--list' could not be set: '--encode' or '--decode' is already set");
+                    err=-1;
+                }else{
+                    c->op = LIST;
+                }
                 break;
 
             case '?':
@@ -120,7 +136,7 @@ Client_args* populate(int argc, char** argv){
         }
     }
 
-    if(err == -1)
+    if(err == -1 || check_arguments(c))
         return NULL;
     else
         return c;
@@ -128,7 +144,7 @@ Client_args* populate(int argc, char** argv){
 
 int checkKey(char* key) {
 	int i=0;
-	while (key[i]) {
+	while(key[i]) {
 		if (!isalpha(key[i]))
 			return -1;
 		i++;
@@ -136,8 +152,8 @@ int checkKey(char* key) {
 	return 0;
 }
 
-void setDefaultOutputFile(Client_args* c) {
-    char* def = "test1"; 		                                             /*TODO: CHANGE WHIT CLIENT PID*/											
+void set_default_outputFile(Client_args* c) {
+    char* def = "test1";/*TODO: CHANGE WHIT CLIENT PID*/											
 	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(D_OUTPUT_FILE)+1));
 	strcat(cn, def );
 	strcat(cn, D_OUTPUT_FILE);
@@ -152,33 +168,58 @@ int is_parameter(char* s){
 }
 
 void print_usage(){
-    printf("server --name string [--msgmax int] [--keymin int] [--keymax int]\n");
-    printf("-n --name : [MANDATORY] specify the name of the service\n");
-    printf("-K --keymax : specify the max length of the key that server can recive\n");
-    printf("-k --keymin : specify the min length of the key that server can recive\n");
-    printf("-M --msgmax : specify the max length of the message that server can recive\n");
+    printf("client --name severname [MODE] [INPUT] [OUTPUT]\n");
+    printf("-n --name    : [MANDATORY] set the name of server to connect\n");
+    printf("Mode:\n");
+    printf("-e --encode  : encode mode, client send to server a message to encode\n");
+    printf("-d --decode  : decode mode, client send to server a message to decode\n");
+    printf("-l --list    : retrive from the server all messages encode/decode\n");
+    printf("-k --key     : specify the key to encode/decode\n");
+    printf("Input:\n");
+    printf("-f --file    : specify the input file to get input message\n");
+    printf("-m --message : specify the message to send to the server\n");
+    printf("Output:\n");
+    printf("-o --output  : specify if the output will be on file (--output file) or console (--output or not set)\n");
 }
 
 void print_err(int* err, char* from, char* msg){
-    printf("error: value of %s is %s\n", from, msg);
+    printf("error: value of %s: %s\n", from, msg);
     *err=-1;
 }
 
 void print(Client_args* c){
     printf("CLient arguments:\n");
-    printf("-name: %s\n", c->nameServer);
-    printf("-key: %s\n", c->key);
+    printf("--name: %s\n", c->nameServer);
+    printf("--key: %s\n", c->key);
     printf("isFile: %d\n", c->isFile);
-    printf("-file: %s\n", c->fileName);
-    printf("-message: %s\n", c->message);
-    printf("-output: %s\n", c->output);
+    printf("--file: %s\n", c->fileName);
+    printf("--message: %s\n", c->message);
+    printf("--output: %s\n", c->output);
     printf("operation: %d\n", c->op);
 }
 
 int check_arguments(Client_args* c) {
-    if (!c->nameServer || c->op==D_INT_VALUE || (c->op>=0 && (!c->key || c->isFile==D_INT_VALUE))) {
-        printf("ERROR!! Arguments malformed. \n");
+    if(c->nameServer == NULL){
+        printf("error: argument missing '--name'\n");
         return -1;
     }
+
+    if(c->op == D_INT_VALUE){
+        printf("error: argument missing '--encode' || '--decode' || '--list'\n");
+        return -1;
+    }     
+
+    if(c->op == ENCODE || c->op == DECODE ){
+        if(c->key == NULL){
+            printf("error: argument missing '--key'\n");
+            return -1;
+        }
+
+        if(c->isFile == D_INT_VALUE){
+            printf("error: argument missing '--file' || '--message'\n");
+            return -1;
+        }
+    }
+    
     return 0;
 }

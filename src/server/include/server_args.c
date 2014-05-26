@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
-Server_args* alloc(){
+Server_args* alloc_args(){
     Server_args* s = malloc( sizeof(Server_args) );
     s->name = NULL;
     s->msgmax = D_MSGMAX;
@@ -41,7 +41,7 @@ Server_args* populate(int argc, char** argv){
         return NULL;
     }
 
-    s = alloc();
+    s = alloc_args();
     err=0;
 
     while(1){
@@ -124,10 +124,10 @@ void print_err(int* err, char* from, char* msg){
 
 void print(Server_args* s){
     printf("Server arguments:\n");
-    printf("-name: %s\n", s->name);
-    printf("-msgmax: %d\n", s->msgmax);
-    printf("-keymin: %d\n", s->keymin);
-    printf("-keymax: %d\n", s->keymax);
+    printf("--name: %s\n", s->name);
+    printf("--msgmax: %d\n", s->msgmax);
+    printf("--keymin: %d\n", s->keymin);
+    printf("--keymax: %d\n", s->keymax);
 }
 
 

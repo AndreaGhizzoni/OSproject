@@ -13,14 +13,6 @@
 #define D_KEYMAX 100 /*default value of max key length*/
 #define D_KEYMIN 1   /*default value of min key length*/
 
-#define ERR_NAME_NULL -1
-#define ERR_NAME_MISSING -7
-#define ERR_NAME_MALFORMED -2
-#define ERR_MSGMAX_MALFORMED -3
-#define ERR_KEYMIN_MALFORMED -4
-#define ERR_KEYMAX_MALFORMED -5
-#define ERR_ARGUMENTS_MALFORMED -6
-
 typedef struct {
     char* name; /*must to be set from sh*/
     int msgmax;
@@ -31,11 +23,10 @@ typedef struct {
 /** 
  * Alloc a new type of Server_args
  */
-Server_args* alloc();
+Server_args* alloc_args();
 
 /**
- * TODO modify docs
- * Populate a server_args given with the command line input in argv
+ * Populate a Server_args given with the command line input in argv
  */
 Server_args* populate(int, char**);
 

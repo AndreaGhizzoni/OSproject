@@ -9,9 +9,6 @@
 #ifndef CLIENT_ARGS
 #define CLIENT_ARGS
 
-/*Definizione errori*/
-#define ERR_ARGUMENTS_MALFORMED -1
-
 /*Definizione variabili*/
 #define D_OUTPUT_FILE "output.txt"
 #define D_INT_VALUE -2
@@ -33,21 +30,17 @@ typedef struct{
 /*Alloca la struttura Client_args*/
 Client_args* alloc();
 
-/**
- * TODO modify docs
- * Populate a server_args given with the command line input in argv
- */
+/*Populate a client_args given with the command line input in argv*/
 Client_args* populate(int, char**);
 
 /*Checks if char* is a valid key, only made of letters*/
 int checkKey(char*);
 
 /*Sets the default name for the output file*/
-void setDefaultOutputFile(Client_args*);
+void set_default_outputFile(Client_args*);
 
 /*return 0 if char* given is a command line argument, otherwise -1 */
 int is_parameter(char*);
-
 
 /*Print a description of server usage */
 void print_usage();
@@ -58,7 +51,7 @@ void print_err(int*, char*, char*);
 /*Textual representation of type Client_args*/
 void print(Client_args*);
 
-/*Checks if all the required arguments are setted*/
+/*Checks if all the required arguments are set*/
 int check_arguments(Client_args*);
 
 #endif
