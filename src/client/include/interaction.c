@@ -8,11 +8,19 @@
 
 #include "interaction.h"
 #include "client_args.h"
+#include <limits.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
 
 char* openClientFifo() {
 	char* fifoname;
-	snprintf(fifoname, 80, "/tmp/client.%d", getpid()); /* compose name */ 
+	sprintf(fifoname, "/tmp/client.%d", getpid()); /* compose name */ 
 	/* open client fifo */
 	if (mkfifo(fifoname, 0622)) { 
 		if (errno!=EEXIST) { 
@@ -23,23 +31,29 @@ char* openClientFifo() {
     return fifoname; 
 }
 
-int findServer(char* serverName) {
+char* findServer(char* serverName) {
 	char* serverFifoName = "/tmp/";
+	int fifo_server;
+
 	strcat(serverFifoName, serverName);
 	strcat(serverName, ".fifo");
+	
 	fifo_server = open(serverFifoName, O_WRONLY); /* open server fifo */
 	if (fifo_server < 0) { 
 		perror("Cannot open well known fifo"); 
-	    return -1; 
+	    return NULL; 
 	}	
-
-	return 0;
+	return serverFifoName;
 } 
 
-void send_request(client_args* c, char* fifo_client) {
-	findServer(c->nameServer);
+void send_request(Client_args* c, int fifo_client) {
 	int nread; 
 	char buffer[PIPE_BUF];
+	int fifo_server;
+
+	fifo_server=fifo_server(c->nameServer);
+	if (fifo_server==NULL)
+		return ERR_UNABLE_TO_CONNECT_TO_SERVER;
 
 	/*send request to server*/
 	nread = write(fifo_server, fifo_client, strlen(fifo_client)+1); /* write name */ 

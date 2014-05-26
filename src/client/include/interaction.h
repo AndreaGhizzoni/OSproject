@@ -13,17 +13,21 @@
 
 /*Definizione errori*/
 #define ERR_ARGUMENTS_MALFORMED -1
+<<<<<<< HEAD
+#define ERR_UNABLE_TO_CONNECT_TO_SERVER -2
+=======
 #define ERR_UNKNOWN_SERVER -2
 #define ERR_UNABLE_TO_CONNECT -3
 
 /*Contacts the server to perform the required operation*/
 int call_server(Client_args*);
+>>>>>>> ef4107ba230648c2584bfa3ab2667bfe7a30a095
 
 char* openClientFifo();
 
-int findServer(char*);
+char* findServer(char*);
 
-void send_request(char*, char*);
+void send_request(Client_args*, int);
 
 
 #endif
