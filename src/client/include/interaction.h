@@ -16,10 +16,8 @@
 #define ERR_UNKNOWN_SERVER -2
 #define ERR_UNABLE_TO_CONNECT -3
 
-<<<<<<< HEAD
 /*Contacts the server to perform the required operation*/
 int call_server(Client_args*);
->>>>>>> 94ebabdd2e0d2fe79ddebbf5b7433dd447ea77f1
 
 char* openClientFifo();
 

@@ -15,7 +15,6 @@
 #define DEBUG 1
 
 int main(int argc, char** argv) {
-<<<<<<< HEAD
 	Client_args* c;
     if(DEBUG) printf("[!!!] CLIENT ID RUNNING IN DEBUG MODE [!!!]\n");
 
@@ -24,7 +23,6 @@ int main(int argc, char** argv) {
         exit(1);
     else
         print(c);
->>>>>>> 94ebabdd2e0d2fe79ddebbf5b7433dd447ea77f1
 
 	return 0;
 }
