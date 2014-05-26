@@ -10,12 +10,14 @@
 #include "include/interaction.h"
 
 int main(int argc, char** argv) {
+	char* clientFifo;
 	Client_args* c =populate(argc, argv);
     print(c);
     if (check_arguments(c) == -1)
     	return -1;
 
-    call_server(c);
+    clientFifo = createClientFifo();
+    send_request(c);
 
 	return 0;
 }

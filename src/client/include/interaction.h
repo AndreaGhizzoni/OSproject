@@ -14,11 +14,13 @@
 #define ERR_UNKNOWN_SERVER -2
 #define ERR_UNABLE_TO_CONNECT -3
 
-/*Contacts the server to perform the required operation*/
-void call_server(Client_args*);
+#include "include/client_args.h"
 
-/*Checks if the server exists*/
-int find_server(char*);
+char* openClientFifo();
+
+int findServer(char*);
+
+void send_request(char*, char*);
 
 
 #endif
