@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 Server* alloc_server(){
     Server* s = malloc( sizeof(Server) );
@@ -20,10 +21,12 @@ Server* alloc_server(){
 
 char* set_fifo_path(Server* s){
     char* fifo;
+    int c;
     if(s->args == NULL)
         return NULL;
-
-    fifo = malloc(strlen(s->args->name)+strlen("/tmp/.fifo"));
+    
+    c = strlen(s->args->name)+strlen("/tmp/.fifo");
+    fifo = malloc(sizeof(char)*c);
     sprintf(fifo, "/tmp/%s.fifo", s->args->name);
 
     return fifo;    

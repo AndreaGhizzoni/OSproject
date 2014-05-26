@@ -17,7 +17,10 @@ typedef struct {
 
 } Server;
 
+/*Alloc the server structure space*/
 Server* alloc_server();
+
+/*set the default fifo path of each server*/
 char* set_fifo_path(Server*);
 
 #endif
