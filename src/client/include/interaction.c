@@ -18,54 +18,62 @@
 #include <string.h>
 #include <fcntl.h>
 
-char* openClientFifo() {
-	char* fifoname;
+char* createFifoClient() {
+	char* fifoname="";
+
 	sprintf(fifoname, "/tmp/client.%d", getpid()); /* compose name */ 
-	/* open client fifo */
-	if (mkfifo(fifoname, 0622)) { 
+	if (mkfifo(fifoname, 0622)) { /* open client fifo */ 
 		if (errno!=EEXIST) { 
 			perror("Cannot create well known fifo"); 
 			exit(-1); 
 	    } 
-    }
-    return fifoname; 
+    } 
+	return fifoname;
 }
 
-char* findServer(char* serverName) {
-	char* serverFifoName = "/tmp/";
-	int fifo_server;
+char* getFifoServerName(char* name) {
+	char* path="";
+	sprintf(path, "/tmp/%s.fifo", name);
+	return path;
+}
 
-	strcat(serverFifoName, serverName);
-	strcat(serverName, ".fifo");
+int send_request(Client_args* c) {
+	/* Variables definition */  
+	char* nameFifoServer; 
+	int fifo_server, fifo_client, nread; 
+	char* fifoname;
+	char buffer[PIPE_BUF]; 
+
+	fifoname = createFifoClient();
+	nameFifoServer = getFifoServerName(c->nameServer);
 	
-	fifo_server = open(serverFifoName, O_WRONLY); /* open server fifo */
+	/* open server fifo */
+	fifo_server = open(nameFifoServer, O_WRONLY);
 	if (fifo_server < 0) { 
 		perror("Cannot open well known fifo"); 
-	    return NULL; 
-	}	
-	return serverFifoName;
-} 
+	    exit(-1); 
+	} 
 
-void send_request(Client_args* c, int fifo_client) {
-	int nread; 
-	char buffer[PIPE_BUF];
-	int fifo_server;
+	/*write request*/
+	nread = write(fifo_server, buffer, strlen(fifoname)+1);
+	close(fifo_server);
 
-	fifo_server=fifo_server(c->nameServer);
-	if (fifo_server==NULL)
-		return ERR_UNABLE_TO_CONNECT_TO_SERVER;
-
-	/*send request to server*/
-	nread = write(fifo_server, fifo_client, strlen(fifo_client)+1); /* write name */ 
-	close(fifo_server);                     /* close server fifo */ 
-	fifo_client = open(fifo_client, O_RDONLY); /* open client fifo */ 
+	/*open client's fifo in read mode*/
+	fifo_client = open(fifoname, O_RDONLY);
 	if (fifo_client < 0) { 
 		perror("Cannot open well known fifo"); 
 		exit(-1); 
 	} 
-	nread = read(fifo_client, buffer, sizeof(buffer)); /* read answer */ 
-	printf("%s", buffer);   /* print fortune */ 
-	close(fifo_client);     /* close client */ 
-	close(fifo_server);     /* close server */ 
-	unlink(fifo_client);    /* remove client fifo */ 
+	/* read answer */ 
+	nread = read(fifo_client, buffer, sizeof(buffer));
+
+	/*print answer*/
+	printf("%s%d", buffer, nread);
+
+	/*Close fifos and remove client fifo*/
+	close(fifo_client);
+	close(fifo_server);
+	unlink(fifoname);
+
+	return 0;
 } 	

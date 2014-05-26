@@ -16,7 +16,6 @@
 
 int main(int argc, char** argv) {
 
-	int fifo_client;
 	Client_args* c;
     if(DEBUG) printf("[!!!] CLIENT ID RUNNING IN DEBUG MODE [!!!]\n");
 
@@ -26,8 +25,7 @@ int main(int argc, char** argv) {
     else
         print(c);
 
-    fifo_client = createClientFifo();
-    send_request(c, fifo_client);
+    send_request(c);
 
 	return 0;
 }

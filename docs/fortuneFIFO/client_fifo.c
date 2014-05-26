@@ -1,13 +1,24 @@
+#include <limits.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+
 int main(int argc, char *argv[]) { 
 	/* Variables definition */ 
 	int n = 0; 
-	char *fortunefilename = "/tmp/fortune.fifo"; 
+	char *fortunefilename; 
 	char line[80]; 
 	int fifo_server, fifo_client; 
 	char fifoname[80]; 
 	int nread; 
 	char buffer[PIPE_BUF]; 
 
+	sprintf(fortunefilename,"/tmp/fortune.fifo");
 	snprintf(fifoname, 80, "/tmp/fortune.%d", getpid()); /* compose name */ 
 	if (mkfifo(fifoname, 0622)) { /* open client fifo */ 
 		if (errno!=EEXIST) { 
