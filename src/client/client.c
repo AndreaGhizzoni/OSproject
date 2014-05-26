@@ -9,13 +9,20 @@
 #include "include/client_args.h"
 #include "include/interaction.h"
 
-int main(int argc, char** argv) {
-	Client_args* c =populate(argc, argv);
-    print(c);
-    if (check_arguments(c) == -1)
-    	return -1;
+#include <stdio.h>
+#include <stdlib.h>
 
-    call_server(c);
+#define DEBUG 1
+
+int main(int argc, char** argv) {
+	Client_args* c;
+    if(DEBUG) printf("[!!!] CLIENT ID RUNNING IN DEBUG MODE [!!!]\n");
+
+    c = populate(argc, argv);
+    if( c == NULL )
+        exit(1);
+    else
+        print(c);
 
 	return 0;
 }

@@ -9,13 +9,15 @@
 #ifndef INTERACION
 #define INTERACION
 
+#include "client_args.h"
+
 /*Definizione errori*/
 #define ERR_ARGUMENTS_MALFORMED -1
 #define ERR_UNKNOWN_SERVER -2
 #define ERR_UNABLE_TO_CONNECT -3
 
 /*Contacts the server to perform the required operation*/
-void call_server(Client_args*);
+int call_server(Client_args*);
 
 /*Checks if the server exists*/
 int find_server(char*);
