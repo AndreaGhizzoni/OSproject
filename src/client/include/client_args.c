@@ -53,7 +53,6 @@ Client_args* populate(int argc, char** argv){
 
     c = alloc();
     err=0;
-
     while(1){
         a = getopt_long( argc, argv, shortopts, long_options, &option_index );
         if( a == -1 || err == -1 ) break;
@@ -68,7 +67,7 @@ Client_args* populate(int argc, char** argv){
             case 'k':
                 if(is_parameter(optarg) == 0)
                     print_err(&err, "'--key'", "is invalid");
-                else if( checkKey(optarg) == -1 )
+                else if( check_key(optarg) == -1 )
                     print_err(&err, "'--key'", "can not contain numbers" );
                 else
                     c->key = optarg;
@@ -142,7 +141,7 @@ Client_args* populate(int argc, char** argv){
         return c;
 }
 
-int checkKey(char* key) {
+int check_key(char* key) {
 	int i=0;
 	while(key[i]) {
 		if (!isalpha(key[i]))
@@ -152,10 +151,9 @@ int checkKey(char* key) {
 	return 0;
 }
 
-void set_default_outputFile(Client_args* c) {
-    char* def = "test1";/*TODO: CHANGE WHIT CLIENT PID*/											
-	char* cn = malloc( sizeof(char)*(strlen(def)+strlen(D_OUTPUT_FILE)+1));
-	strcat(cn, def );
+void set_default_outputFile(Client_args* c) {											
+	char* cn = malloc( sizeof(char)*(strlen(D_OUTPUT_FILE)+6));
+	sprintf(cn, "%d", getpid());
 	strcat(cn, D_OUTPUT_FILE);
 	c->output=cn;
 }

@@ -34,7 +34,7 @@ Client_args* alloc();
 Client_args* populate(int, char**);
 
 /*Checks if char* is a valid key, only made of letters*/
-int checkKey(char*);
+int check_key(char*);
 
 /*Sets the default name for the output file*/
 void set_default_outputFile(Client_args*);
