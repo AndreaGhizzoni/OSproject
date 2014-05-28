@@ -28,7 +28,7 @@ static struct option long_options[]={
     {"msgmax", required_argument, 0, 'M'},
     {0,0,0,0}
 };
-const char* shortopts = "n:kKM";
+const char* shortopts = "n:k:K:M:";
 
 Server_args* populate(int argc, char** argv){
     int c, keymin, keymax, msgmax, err;
