@@ -16,6 +16,10 @@
 
 #define DEBUG 1
 
+/* Global Variableused for signal handler ( I know not a good idea ) */
+Server* server;
+
+
 /* HANDLER FUNCTION FOR SIGNAL */
 void handle_function(){
     printf("\nSignal get\n");
@@ -30,20 +34,17 @@ Server_args* parse_args(int, char**);
 void init_handler();
 
 int main(int argc, char** argv){
-    Server* server;
-    char* fifo_name;
     if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
 
     init_handler();
 
     server = alloc_server();
     server->args = parse_args(argc, argv);
-    if( (fifo_name = set_fifo_path(server)) == NULL){
+    if( (server->fifo_path = set_fifo_path(server->args->name)) == NULL){
         printf("error: other server already found with name %s\n", server->args->name);
         exit(1);
-    }else{
-        server->fifo_path = fifo_name; 
     }
+
     if(DEBUG) printf("[INFO] server set properly\n");
 
     /* create well known fifo if does’t exist */
