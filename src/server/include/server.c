@@ -19,15 +19,15 @@ Server* alloc_server(){
     return s;
 }
 
-char* set_fifo_path(Server* s){
+char* set_fifo_path(char* s){
     char* fifo;
     int c;
-    if(s->args == NULL)
+    if(s== NULL)
         return NULL;
     
-    c = strlen(s->args->name)+strlen("/tmp/.fifo");
+    c = strlen(s)+strlen("/tmp/.fifo");
     fifo = malloc(sizeof(char)*c);
-    sprintf(fifo, "/tmp/%s.fifo", s->args->name);
+    sprintf(fifo, "/tmp/%s.fifo", s);
 
     return fifo;    
 }
