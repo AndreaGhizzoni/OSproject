@@ -39,26 +39,68 @@ char* get_fifo_server_name(char* name) {
   return path;
 }
 
+char* format_buffer(Client_args* c) {
+  char *pid, *mode, *input, *output, *msg;
+
+  pid = malloc( sizeof(char)*6);
+  sprintf(pid, "%d", getpid());
+
+  if (c->op==-1) {
+      mode = malloc( sizeof(char)*strlen("l;")+1);
+  }
+  else {                
+    mode = malloc( sizeof(char)*(strlen(c->key)+3));
+    if (c->op==0)
+      sprintf(mode, "e;%s", c->key);
+    else
+      sprintf(mode, "d;%s", c->key);
+  
+    if (c->isFile==0) {
+      input = malloc( sizeof(char)*(strlen(c->message)+3));
+      sprintf(input, "m;%s", c->message);
+    }
+    else {
+      input = malloc( sizeof(char)*(strlen(c->fileName)+3));
+      sprintf(input, "i;%s", c->fileName);
+    }
+
+    if (c->output==NULL) {
+      output = malloc( sizeof(char)*2);
+      sprintf(output, ";");
+    }
+    else {
+      output = malloc( sizeof(char)*(strlen(c->output)+3));
+      sprintf(output, "o;%s", c->output);
+    }
+  }
+
+  msg = malloc( sizeof(char)*(strlen(pid)+strlen(mode)+strlen(input)+strlen(output)+4));
+  sprintf(msg, "%s|%s|%s|%s", pid, mode, input, output);
+
+  return msg;
+}
+
 int send_request(Client_args* c) {
   /* Variables definition */
-  char* nameFifoServer; 
-  int fifo_server, fifo_client, nread; 
-  char* fifoname;
-  char buffer[PIPE_BUF]; 
-
-  fifoname = create_fifo_client();
-
-  nameFifoServer = get_fifo_server_name(c->nameServer);
-
+  int fifo_server, fifo_client, nread, size;
+  char buffer[PIPE_BUF];
+  char* message;
+  char* fifoname = create_fifo_client();
+  char *nameFifoServer = get_fifo_server_name(c->nameServer);
+  
   /* open server fifo */
   fifo_server = open(nameFifoServer, O_WRONLY);
   if (fifo_server < 0) { 
     perror("Cannot open well known fifo"); 
       exit(-1); 
-  } 
+  }
 
   /*write request*/
+  message=format_buffer(c);
+  size= sizeof(char)*strlen(message);
+  sprintf(buffer, "%d", size);
   nread = write(fifo_server, buffer, strlen(fifoname)+1);
+  sprintf(buffer, "%s", message);
   close(fifo_server);
 
   /*open client's fifo in read mode*/
@@ -66,7 +108,10 @@ int send_request(Client_args* c) {
   if (fifo_client < 0) { 
     perror("Cannot open well known fifo"); 
     exit(-1); 
-  } 
+  }
+
+  /*loop to chack when the client can read*/
+
   /* read answer */ 
   nread = read(fifo_client, buffer, sizeof(buffer));
 
