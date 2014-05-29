@@ -23,4 +23,11 @@ Server* alloc_server();
 /*set the default fifo path of each server*/
 char* set_fifo_path(char*);
 
+/*this function read the char* given as a standard message from client
+ * <pid>|<e/d/l>;<key>|<i/m>;<in_file/message>|o;<oit_file>\0*/
+void read_client_buffer(char*, int); 
+
+/*this function extracts the substring from message, from start to end point*/
+char* substr(char*, int, int); 
+
 #endif
