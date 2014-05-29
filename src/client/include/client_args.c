@@ -77,7 +77,8 @@ Client_args* populate(int argc, char** argv){
                 if((is_parameter(optarg) == 0 )||(c->message!=NULL))
                     print_err(&err, "'--file'", "is invalid or '--message' is set");
                 else {
-                    c->fileName = optarg;
+                    if( (c->fileName = realpath(optarg, NULL) ) == NULL )
+                        print_err(&err, "'--file'","input file not found");
                     c->isFile = 1;
                 }
                 break;
@@ -95,7 +96,8 @@ Client_args* populate(int argc, char** argv){
                 if(!optarg)
                     set_default_outputFile(c);
                 else
-                    c->output = optarg;
+                    if( (c->output = realpath(optarg, NULL) ) == NULL )
+                        print_err(&err, "'--output'","output file not found");
                 break;
 
             case 'e':
@@ -155,6 +157,9 @@ void set_default_outputFile(Client_args* c) {
 	char* cn = malloc( sizeof(char)*(strlen(D_OUTPUT_FILE)+6));
 	sprintf(cn, "%d", getpid());
 	strcat(cn, D_OUTPUT_FILE);
+    fclose(fopen(cn, "w"));
+
+    cn = realpath(cn, NULL);
 	c->output=cn;
 }
 
