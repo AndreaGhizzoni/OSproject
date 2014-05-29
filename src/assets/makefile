@@ -19,26 +19,23 @@ GCC=gcc
 CFLAGS=-Wall -Werror -ansi -pedantic -faggressive-loop-optimizations -O2 \
 	   -Wunreachable-code
 
-SRC=$(wildcard include/*.c)
-OBJS=$(shell ls | grep .o)
-
-.SILENT: description clear
+.SILENT: description clear run
 .PHONY: description clear
 
 default: description
 
 description:
-	echo "Makefile to compile all the server dep. Usage:"
-	echo "> make dep    -> to compile all the server dep."
-	echo "> make server -> to compile the server with all the dep."
-	echo "> make clear  -> clear all objects file in root directory"
+	echo "Makefile to compile the program assets generator. Usage:"
+	echo "> make assets -> compile the program wich generate ghe assets file."
+	echo "> make clear  -> clear the old assets generator program"
+	echo "> make run    -> run the assets program generator."
+
+run: clear assets
+	./assets
 
 clear:
-	$(RM) $(OBJS)
+	$(RM) assets 
 
-dep: $(SRC)
-	$(GCC) $(CFLAGS) -c $^
-
-server: clear dep
-	$(GCC) $(CFLAGS) main.c -o server $(OBJS)
+assets: clear 
+	$(GCC) $(CFLAGS) assets.c -o assets 
 
