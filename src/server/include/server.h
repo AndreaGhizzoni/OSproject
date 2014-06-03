@@ -17,8 +17,25 @@ typedef struct {
 
 } Server;
 
+typedef struct {
+    char* pid; /*NULL: not set*/
+    char what_to_do; /*x: not set, e: encode, d: decode, l: list*/
+    char i_mode;     /*x: not set, i: input file, m: message*/
+    char o_mode;     /*x: not set, o: output file*/
+
+    char* key; /*not NULL if what_to_do=='e' || what_to_do=='d'*/
+    char* in_file; /*not NULL if i_mode=='i'*/
+    char* in_msg;  /*not NULL if i_mode=='m'*/
+    char* out_file;/*not NULL if o_mode=='o'*/
+
+    char*  error; /*not NULL if there was some errors*/
+} parsed_msg;
+
 /*Alloc the server structure space*/
 Server* alloc_server();
+
+/*Alloc the parsed client message space*/
+parsed_msg* alloc_parsed_msg();
 
 /*set the default fifo path of each server*/
 char* set_fifo_path(char*);
@@ -29,5 +46,10 @@ void read_client_buffer(char*, int);
 
 /*this function extracts the substring from message, from start to end point*/
 char* substr(char*, int, int); 
+
+void parse_pid(parsed_msg*, char*);
+void parse_mode(parsed_msg*, char*);
+void parse_input(parsed_msg*, char*);
+void parse_output(parsed_msg*, char*);
 
 #endif
