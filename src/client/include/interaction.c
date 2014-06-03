@@ -111,12 +111,19 @@ int send_request(Client_args* c) {
   }
 
   /*loop to chack when the client can read*/
-
-  /* read answer */ 
+  printf("Waiting for answer...\n");
   nread = read(fifo_client, buffer, sizeof(buffer));
+  while (nread==0) {
+    nread = read(fifo_client, buffer, sizeof(buffer));
+  }
 
-  /*print answer*/
-  printf("%s%d", buffer, nread);
+  if (strcmp(buffer, "OK")!=0 && strcmp(buffer, "ERR")!=0) {                    //TODO change
+    nread = read(fifo_client, buffer, sizeof(buffer));
+    /*print answer*/
+    printf("%s%d", buffer, nread);
+  }
+
+  printf("My work is done.\n");
 
   /*Close fifos and remove client fifo*/
   close(fifo_client);
