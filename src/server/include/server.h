@@ -14,16 +14,17 @@
 typedef struct {
     Server_args* args;
     char* fifo_path;
+    char* encoded_file;
 
 } Server;
 
 typedef struct {
-    char* pid; /*NULL: not set*/
+    char* pid;       /*NULL: not set*/
     char what_to_do; /*x: not set, e: encode, d: decode, l: list*/
     char i_mode;     /*x: not set, i: input file, m: message*/
-    char o_mode;     /*x: not set, o: output file*/
+    char o_mode;     /*x: not set, o: output file, c: console*/
 
-    char* key; /*not NULL if what_to_do=='e' || what_to_do=='d'*/
+    char* key;     /*not NULL if what_to_do=='e' || what_to_do=='d'*/
     char* in_file; /*not NULL if i_mode=='i'*/
     char* in_msg;  /*not NULL if i_mode=='m'*/
     char* out_file;/*not NULL if o_mode=='o'*/
@@ -42,14 +43,22 @@ char* set_fifo_path(char*);
 
 /*this function read the char* given as a standard message from client
  * <pid>|<e/d/l>;<key>|<i/m>;<in_file/message>|o;<oit_file>\0*/
-void read_client_buffer(char*, int); 
+parsed_msg* read_client_buffer(char*, int); 
+
+/*this function check if pid passed as char* is a valid number*/
+void parse_pid(parsed_msg*, char*);
+/*this function parse the char* passed as the part of client message about
+ * what server will do*/
+void parse_mode(parsed_msg*, char*);
+/*this function parse the char* passed as the part of client message about 
+ * the input menthod of message to decode/encode*/
+void parse_input(parsed_msg*, char*);
+/*this function parse the char* passed as the part of client message about
+ * the output method of the server*/
+void parse_output(parsed_msg*, char*);
 
 /*this function extracts the substring from message, from start to end point*/
 char* substr(char*, int, int); 
 
-void parse_pid(parsed_msg*, char*);
-void parse_mode(parsed_msg*, char*);
-void parse_input(parsed_msg*, char*);
-void parse_output(parsed_msg*, char*);
-
+void print_parsed_msg(parsed_msg*);
 #endif

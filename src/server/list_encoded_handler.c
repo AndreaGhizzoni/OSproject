@@ -4,14 +4,16 @@
 
 #define MSG_MAX 100      /*In server_args*/
 
-char* create_output_file(char* server_name) {
-  char* output_file = (char*)malloc( sizeof(char)*(strlen(server_name)+strlen("out_")+1));
-  sprintf(output_file, "out_%s", server_name);
-  fclose(fopen(output_file, "w"));
+char* create_output_file(char* server_name){
 
-  output_file = realpath(output_file, NULL);
+    int len = strlen(server_name)+strlen("out_")+1;
+    char* output_file = (char*)malloc( sizeof(char)*len);
+    sprintf(output_file, "out_%s", server_name);
+    fclose(fopen(output_file, "w"));
 
-  return output_file;
+    output_file = realpath(output_file, NULL);
+
+    return output_file;
 }
 
 void write_encoded(char* msg, char* output_file) {

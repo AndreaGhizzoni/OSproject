@@ -54,9 +54,10 @@ char* substr(char* msg, int start, int end){
     return mode;
 }
 
-void read_client_buffer(char* msg, int len) {
-    char *pid; char* mode; char* input; char* output;
+parsed_msg* read_client_buffer(char* msg, int len) {
+    char *pid=""; char* mode=""; char* input=""; char* output="";
     int m=0; int start=0; int end=0;
+    parsed_msg* p;
 
     while (m!=4) {
         start=end;
@@ -84,34 +85,27 @@ void read_client_buffer(char* msg, int len) {
         m++;
         end++;
     }
-    /*
-    printf("%s\n",pid );
-    printf("%s\n",mode );
-    printf("%s\n",input );
-    printf("%s\n",output );
-    */
-    parsed_msg* p = alloc_parsed_msg();
+    p = alloc_parsed_msg();
 
     parse_pid(p, pid);
-    /*if(p->error != NULL) return p;*/
+    if(p->error != NULL) return p;
 
     parse_mode(p, mode);
-    /*if(p->error != NULL) return p;*/
+    if(p->error != NULL) return p;
 
     parse_input(p, input);
-    /*if(p->error != NULL) return p;*/
+    if(p->error != NULL) return p;
 
     parse_output(p, output);
-    /*if(p->error != NULL) return p;*/
+    if(p->error != NULL) return p;
 
-    /*return p;*/
+    return p;
 }
 
 void parse_pid(parsed_msg* p, char* pid){
-    int i = 0;
-    int r = 0;
+    int i = 0; int r = 0;
     while( pid[i] != '\0' ){
-        if( !isdigit(pid[i++]) ) r=-1;
+        if( !isdigit(pid[i++]) ){ r=-1; break; }
     }
 
     if( r == -1 )
@@ -121,13 +115,61 @@ void parse_pid(parsed_msg* p, char* pid){
 }
 
 void parse_mode(parsed_msg* p, char* mode){
-    
+    if( mode[1] != ';'){
+        p->error = "Malformed mode separator.\0";
+    }else{
+        if(mode[0] == 'e' || mode[0] == 'd'){
+            p->what_to_do = mode[0];
+            p->key = substr(mode, 2, strlen(mode));
+        }else if(mode[0] == 'l'){
+            p->what_to_do = mode[0];
+        }else{
+            p->error = "Unricognized mode command from client message\0";
+        }
+    } 
 }
 
 void parse_input(parsed_msg* p, char* input){
-    
+    if( input[1] != ';'){
+        p->error = "Malformed input separator.\0";
+    }else{
+        if(input[0] == 'i' ){
+            p->i_mode = input[0];
+            p->in_file = substr(input, 2, strlen(input));
+        }else if(input[0] == 'm'){
+            p->i_mode = input[0];
+            p->in_msg = substr(input, 2, strlen(input));
+        }else{
+            p->error = "Unricognized input command from client message\0";
+        }
+    } 
 }
 
 void parse_output(parsed_msg* p, char* output){
-    
+    if(output[0] == ';'){
+        p->o_mode = 'c';
+    }else{
+        if(output[1] == ';'){
+            if(output[0] == 'o'){
+                p->o_mode = output[0];
+                p->out_file = substr(output, 2, strlen(output));
+            }else{
+                p->error = "Unricognized output command from client message\0";
+            }
+        }else{
+            p->error = "Malformed output separator.\0";
+        }
+    }
+}
+
+void print_parsed_msg(parsed_msg* p){
+    printf("pid: %s\n", p->pid);
+    printf("what_to_do: %c\n", p->what_to_do);
+    printf("i_mode: %c\n", p->i_mode);
+    printf("key: %s\n", p->key);
+    printf("in_file: %s\n", p->in_file);
+    printf("in_msg : %s\n", p->in_msg);
+    printf("o_mode: %c\n", p->o_mode);
+    printf("out_file: %s\n", p->out_file);
+    printf("error: %s\n", p->error);
 }

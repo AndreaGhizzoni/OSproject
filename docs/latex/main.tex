@@ -1,4 +1,4 @@
-\documentclass[12pt]{report}
+\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{graphicx}
@@ -7,8 +7,56 @@
 \begin{document}
 \input{titlepage}
 
-\chapter{Introduzione}
-\input{chapters/introduction}
+\section{Analisi del Progetto}
+Il progetto scelto deve poter funzionare solo per sistemi operativi Linux e consiste nello sviluppo di sistema client-server  nel quale il client richiede al server di codificare o decodificare un testo scelto dall'utente attraverso una determinata chiave. La codifica e la decodifica avviene tramite traslitterazione sull'alfabeto inglese. La compilazione di tutto il progetto deve avvenire tramite makefile e produrra' due binari all'interno alla cartella bin rispettivamente per il client e per il server.
+
+Il Server deve rispettare determinate caratteristiche:
+\begin{itemize}
+    \item deve essere etichettato con un nome.
+    \item deve rimanere in attesa della "connessione" di un client
+    \item deve poter accettare la "connessione" attraverso un messaggio specifico
+    \item deve poter ricevere i dati dal client per poter procedere all'elaborazione
+    \item in caso di un errore inatteso ( dati in ingresso malformati, errore nel canale di comunicazione, ecc.. ) deve produrre un errore opportuno e comunicarlo al client 
+    \item l'unico caso di terminazione del server e' attraverso i segnali di terminazione dei processi del sistema
+\end{itemize}
+
+Da testo il server deve poter rispondere alle richieste di piu' client, quindi sara' necessario che non sia lui direttamente a soddisfare tutte le richieste (intese come codifica/decodifica), ma che una terza "entita'" prenda in carico la richiesta del client e lo serva.
+
+Il client, invece, deve poter accettare i parametri dell'utente, inviarli al server per poterli elaborare e predisporsi per la ricezione dei risultati. Al client non e' richiesto di rimanere in esecuzione una volta che ha ricevuto i dati elaborati, ma solo di salvare i risultati su file o stamparli a console.
+\vspace*{2cm}
+
+\section{Analisi della Soluzione}
+Prima di presentare la soluzione riportiamo in seguito la gerarchia delle cartelle del progetto:
+\begin{itemize}
+    \item /src contiene tutti i sorgenti necessari
+    \begin{itemize}
+        \item /server contiene tutti i file per compilare il server
+        \item /client contiene tutti i file per compilare il client
+        \item /util contiene tutte le utility necessarie sia al client che al server.
+        \item /assets contiene il programma (con sorgenti) del progreamma generatore degli assets
+    \end{itemize}
+    \item /assets conterra' degli esempi di input file generati automaticamente dal comando make assets
+    \item /bin conterra' i binari del server e del client dopo il comando make bin
+    \item /docs contiene i documenti del progetto
+\end{itemize}
+
+Di seguito verra' elencata la nostra soluzione distinguendo tra client, server e makefile.
+\paragraph{Makefile}
+\begin{itemize}
+    \item sono presenti tutti i target richiesti nel testo del progetto (bin, assets, test ecc..)
+    \item il compilatore gcc e' stato messo in condizioni di evidenziare piu' errori possibili e in modo da seguire lo standard ANSI C:
+    \begin{itemize}
+        \item Werror: tutti i warning vengono segnati come errori    
+        \item Wall: visualizza tutti i messaggi di warning
+        \item Wunreachable-code: visualizza un warning quando trova una variabile non usata
+        \item ansi: utilizza lo standarc ANSI C
+        \item pedantic: il compilatore visualizza piu' warning del dovuto
+        \item O2: flag di ottimizzazione del compilatore
+    \end{itemize}
+    \item il target bin non eseguira' direttamente la compilazione del client e del server, ma richiamera' i makefile dei rispettivi programmi; i quali compileranno tutte le dipendenze e poi i programma stesso. Ad esempio: nella cartella src/server e' presente un makefile con tre target: description, dep e server: la prima semplicemente stampa una descrizione del makefile, la seconda compila tutte le dipendenze del server contenute nella cartella include e, infine, il target server compila appunto il server con tutte le dipendenze. 
+\end{itemize} 
+
+
 
 
 \end{document}
