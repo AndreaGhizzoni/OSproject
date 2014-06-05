@@ -8,7 +8,12 @@
 \input{titlepage}
 
 \section{Analisi del Progetto}
-Il progetto scelto deve poter funzionare solo per sistemi operativi Linux e consiste nello sviluppo di sistema client-server  nel quale il client richiede al server di codificare o decodificare un testo scelto dall'utente attraverso una determinata chiave. La codifica e la decodifica avviene tramite traslitterazione sull'alfabeto inglese. La compilazione di tutto il progetto deve avvenire tramite makefile e produrra' due binari all'interno alla cartella bin rispettivamente per il client e per il server.
+Il progetto scelto deve essere sviluppato solo per sistemi operativi Linux e consiste nello scrivere un progreamma client che richiede ad un programma server di codificare o decodificare un testo scelto dall'utente attraverso una determinata chiave. La codifica e la decodifica avviene tramite traslitterazione sull'alfabeto inglese. Come indicato nel testo il client e il server devono poter accettare determinati parametri dalla shell: come per esempio il nome del server a cui il client deve collegarsi, lanciare il server con un nome univoco, nome del file o messaggio da inviare al server per essere elaborato ecc..
+
+E' possibile utilizzare tutte le funzioni che il kernel Linux mette a disposizione, tranne ovviamente la chiamata di sistema system(), la quale darebbe pieno accesso ad una serie di comandi gia' presenti. In aggiunta non e' possibile utilizzare il meccanismo di comunicazione dei socket in favore di PIPE e FIFO.
+
+La compilazione di tutto il progetto deve avvenire tramite makefile e produrra' due binari all'interno alla cartella bin rispettivamente per il client e per il server.
+
 
 Il Server deve rispettare determinate caratteristiche:
 \begin{itemize}
@@ -57,6 +62,9 @@ Di seguito verra' elencata la nostra soluzione distinguendo tra client, server e
 \end{itemize} 
 
 
+\paragraph{Client}
+
+\paragraph{Server}
 
 
 \end{document}
