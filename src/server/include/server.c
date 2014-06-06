@@ -17,6 +17,7 @@ Server* alloc_server(){
     Server* s = malloc( sizeof(Server) );
     s->args = NULL;
     s->fifo_path = NULL;
+    s->encoded_file_path = NULL;
     return s;
 }
 
@@ -47,6 +48,17 @@ char* set_fifo_path(char* s){
     return fifo;    
 }
 
+char* set_encoded_file(char* server_name){
+    int len = strlen(server_name)+strlen("/tmp/.list")+1;
+    char* output_file = (char*)malloc( sizeof(char)*len );
+    sprintf(output_file, "/tmp/%s.list", server_name);
+
+    if( access(output_file, F_OK ) == -1 )
+        fclose(fopen(output_file, "w"));
+
+    return output_file;
+}
+
 char* substr(char* msg, int start, int end){
     char* mode = (char*) malloc( sizeof(char)*(end-start) );
     strncpy(mode, (msg+start), (end-start));
@@ -54,7 +66,7 @@ char* substr(char* msg, int start, int end){
     return mode;
 }
 
-parsed_msg* read_client_buffer(char* msg, int len) {
+parsed_msg* read_client_buffer(char* server_name, char* msg, int len) {
     char *pid=""; char* mode=""; char* input=""; char* output="";
     int m=0; int start=0; int end=0;
     parsed_msg* p;
@@ -99,6 +111,8 @@ parsed_msg* read_client_buffer(char* msg, int len) {
     parse_output(p, output);
     if(p->error != NULL) return p;
 
+    p->server_name = server_name;
+
     return p;
 }
 
@@ -109,14 +123,14 @@ void parse_pid(parsed_msg* p, char* pid){
     }
 
     if( r == -1 )
-        p->error = "Client pid recived malformed by server.\0";
+        p->error = "ERROR: Client pid recived malformed by server.\0";
     else
         p->pid = pid;
 }
 
 void parse_mode(parsed_msg* p, char* mode){
     if( mode[1] != ';'){
-        p->error = "Malformed mode separator.\0";
+        p->error = "ERROR: Malformed mode separator.\0";
     }else{
         if(mode[0] == 'e' || mode[0] == 'd'){
             p->what_to_do = mode[0];
@@ -124,14 +138,14 @@ void parse_mode(parsed_msg* p, char* mode){
         }else if(mode[0] == 'l'){
             p->what_to_do = mode[0];
         }else{
-            p->error = "Unricognized mode command from client message\0";
+            p->error = "ERROR: Unricognized mode command from client message\0";
         }
     } 
 }
 
 void parse_input(parsed_msg* p, char* input){
     if( input[1] != ';'){
-        p->error = "Malformed input separator.\0";
+        p->error = "ERROR: Malformed input separator.\0";
     }else{
         if(input[0] == 'i' ){
             p->i_mode = input[0];
@@ -140,7 +154,7 @@ void parse_input(parsed_msg* p, char* input){
             p->i_mode = input[0];
             p->in_msg = substr(input, 2, strlen(input));
         }else{
-            p->error = "Unricognized input command from client message\0";
+            p->error = "ERROR: Unricognized input command from client message\0";
         }
     } 
 }
@@ -154,10 +168,10 @@ void parse_output(parsed_msg* p, char* output){
                 p->o_mode = output[0];
                 p->out_file = substr(output, 2, strlen(output));
             }else{
-                p->error = "Unricognized output command from client message\0";
+                p->error = "ERROR: Unricognized output command from client message\0";
             }
         }else{
-            p->error = "Malformed output separator.\0";
+            p->error = "ERROR: Malformed output separator.\0";
         }
     }
 }

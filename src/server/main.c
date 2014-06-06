@@ -40,6 +40,7 @@ int main(int argc, char** argv){
 
     server = alloc_server();
     server->args = parse_args(argc, argv);
+    server->encoded_file_path = set_encoded_file(server->args->name);
     if( (server->fifo_path = set_fifo_path(server->args->name)) == NULL){
         printf("error: other server already found with name %s\n", server->args->name);
         exit(1);
