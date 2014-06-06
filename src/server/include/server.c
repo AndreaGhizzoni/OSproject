@@ -45,6 +45,9 @@ char* set_fifo_path(char* s){
     fifo = malloc(sizeof(char)*c);
     sprintf(fifo, "/tmp/%s.fifo", s);
 
+    if( access(fifo, F_OK ) != -1 )
+        return NULL;
+
     return fifo;    
 }
 

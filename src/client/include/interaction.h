@@ -29,9 +29,7 @@ char* format_buffer(Client_args*);
 
 void read_answer(int, char*);
 
-void send_request(Client_args*, int, char*, int, char* );
-
-void close_all(int, int, char*);
+void send_request(Client_args*, int);
 
 int handle_request(Client_args*);
 
