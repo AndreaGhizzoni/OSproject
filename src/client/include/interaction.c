@@ -66,6 +66,10 @@ char* format_buffer(Client_args* c) {
 
   if (c->op==-1) {
       mode = malloc( sizeof(char)*strlen("l;")+1);
+      sprintf(mode, "l;");
+      lenall = strlen(pid)+ strlen(mode)+3;
+      msg = malloc( sizeof(char)*lenall );
+      sprintf(msg, "%s|%s||", pid, mode);
   }
   else {                
     mode = malloc( sizeof(char)*(strlen(c->key)+3));
@@ -91,11 +95,11 @@ char* format_buffer(Client_args* c) {
       output = malloc( sizeof(char)*(strlen(c->output)+3));
       sprintf(output, "o;%s", c->output);
     }
-  }
 
-  lenall = strlen(pid)+strlen(mode)+strlen(input)+strlen(output)+4;
-  msg = malloc( sizeof(char)*lenall );
-  sprintf(msg, "%s|%s|%s|%s", pid, mode, input, output);
+    lenall = strlen(pid)+strlen(mode)+strlen(input)+strlen(output)+4;
+    msg = malloc( sizeof(char)*lenall );
+    sprintf(msg, "%s|%s|%s|%s", pid, mode, input, output);
+  }
   return msg;
 }
 
@@ -144,7 +148,6 @@ void send_request(Client_args* c, int fifo_server) {
 int handle_request(Client_args* c) {
   int fifo_server = get_fifo_server(get_fifo_server_name(c->nameServer));
   send_request(c, fifo_server);
-
   close(fifo_server);
   return 0;
 }   
