@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     else
         print(c);
 
-    send_request(c);
+    handle_request(c);
 
 	return 0;
 }
