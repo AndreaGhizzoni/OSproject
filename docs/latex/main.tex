@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[format=plain, 
 justification=raggedright,singlelinecheck=false]{caption}
-\usepackage[top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}
+\usepackage[top=2.7cm, bottom=2.7cm, left=3cm, right=3cm]{geometry}
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 
@@ -12,14 +12,14 @@ justification=raggedright,singlelinecheck=false]{caption}
 \input{titlepage}
 
 \section{Analisi del Progetto}
-Il progetto scelto deve essere sviluppato solo per sistemi operativi Linux e consiste nello scrivere un programma client che può richiedere ad un programma server di elencare la lista dei messaggi da lui codificati oppure di codificare o decodificare un testo scelto dall'utente. La codifica e la decodifica avvengono tramite traslitterazione sull'alfabeto inglese, attraverso una determinata chiave fornita dall'utente. Come indicato nel testo il client e il server devono poter accettare determinati parametri dalla shell: il nome del server a cui il client deve collegarsi, il nome (univoco) del server da lanciare, nome del file o messaggio da inviare al server per essere elaborato, ecc..
+Il progetto scelto, sviluppato per sistemi operativi Linux, consiste nello scrivere un programma client che può richiedere ad un programma server di elencare la lista dei messaggi da lui codificati oppure di codificare o decodificare un testo scelto dall'utente. La codifica e la decodifica avvengono tramite traslitterazione sull'alfabeto inglese, attraverso una determinata chiave fornita dall'utente. Come indicato nel testo il client e il server devono poter accettare determinati parametri dalla shell: il nome del server a cui il client deve collegarsi, il nome (univoco) del server da lanciare, nome del file o messaggio da inviare al server per essere elaborato, ecc..
 
 È possibile utilizzare tutte le funzioni che il kernel Linux mette a disposizione, tranne ovviamente la chiamata di sistema system(), la quale darebbe pieno accesso ad una serie di comandi già presenti. In aggiunta non è possibile utilizzare il meccanismo di comunicazione dei socket in favore di PIPE e FIFO.
 
 La compilazione di tutto il progetto deve avvenire tramite makefile e produrrà due binari all'interno alla cartella bin rispettivamente per il client e per il server.
 
 Da testo il server deve poter rispondere alle richieste di più client, quindi sarà necessario che non sia lui direttamente a soddisfare tutte le richieste (intese come codifica/decodifica/lista dei messaggi codificati), ma che una terza "entità" prenda in carico la richiesta del client e lo serva.
-\vspace*{1cm}
+\vspace*{0,5cm}
 
 \section{Analisi della Soluzione}
 Prima di presentare la soluzione riportiamo in seguito la gerarchia delle cartelle del progetto:
@@ -36,10 +36,15 @@ Prima di presentare la soluzione riportiamo in seguito la gerarchia delle cartel
 \end{itemize}
 
 Di seguito verrà elencata la nostra soluzione distinguendo tra makefile, client, server e comunicazione.
-\paragraph{Makefile}
-\begin{itemize}
-    \item sono presenti tutti i target richiesti nel testo del progetto (bin, res, test ecc..)
-    \item il compilatore gcc e' stato messo in condizioni di evidenziare più errori possibili e in modo da seguire lo standard ANSI C:
+\paragraph{Makefile} \mbox{}\\ \\
+Sono presenti, oltre ad una breve descrizione iniziale, tutti i target richiesti nel testo del progetto: 
+    	\begin{itemize}
+   		\item bin: bin non eseguirà direttamente la compilazione del client e del server, ma richiamerà i makefile dei rispettivi programmi; i quali compileranno tutte le dipendenze e poi il programma stesso. Ad esempio: nella cartella src/server è presente un makefile con tre target: description, dep e server: la prima semplicemente stampa una descrizione del makefile, la seconda compila tutte le dipendenze del server contenute nella cartella include e, infine, il target server compila appunto il server con tutte le dipendenze. 
+    		\item assets: compila ed esegue il programma che genera automaticamente dei possibili messaggi di input. Abbiamo scelto di creare delle semplici "parole" casuali, contenenti anche caratteri non alfabetici in modo da mostrare il buon funzionamento delle funzioni di codifica e decodifica.
+    		\item test: richiama i target bin ed assets ed avvia l'esecuzione del programma
+    		\item clear: elimina ogni file automaticamente generato o temporaneo.
+    	\end{itemize}
+Il compilatore gcc e' stato messo in condizioni di evidenziare più errori possibili e in modo da seguire lo standard ANSI C:
     \begin{itemize}
         \item Werror: tutti i warning vengono segnati come errori    
         \item Wall: visualizza tutti i messaggi di warning
@@ -48,42 +53,40 @@ Di seguito verrà elencata la nostra soluzione distinguendo tra makefile, client
         \item pedantic: il compilatore visualizza più warning del dovuto
         \item O2: flag di ottimizzazione del compilatore
     \end{itemize}
-    \item il target bin non eseguirà direttamente la compilazione del client e del server, ma richiamerà i makefile dei rispettivi programmi; i quali compileranno tutte le dipendenze e poi il programma stesso. Ad esempio: nella cartella src/server è presente un makefile con tre target: description, dep e server: la prima semplicemente stampa una descrizione del makefile, la seconda compila tutte le dipendenze del server contenute nella cartella include e, infine, il target server compila appunto il server con tutte le dipendenze. 
-\end{itemize} 
 
 
-\paragraph{Client} \mbox{}\\
-Il client deve poter svolgere le seguenti operazioni
+\paragraph{Client} \mbox{}\\ \\
+Il client svolge le seguenti operazioni
 \begin{itemize}
-    \item accettare i parametri dell'utente (nome del server, operazione richiesta, eventuale messaggio o file di input, chiave, eventuale file di output)
-    \item inviarle i suddetti parametri  al server per poterli elaborare e predisporsi per la ricezione dei risultati.
+    \item accetta i parametri dell'utente (nome del server, operazione richiesta, eventuali messaggio o file di input, chiave e file di output);
+    \item invia i suddetti parametri  al server per poterli elaborare;
+    \item si predispone per la ricezione dei risultati, attraverso un loop;
+    \item nel caso in cui l'output sia a video, stampa quanto ritornato dal server.
 \end{itemize}
-Al client non è richiesto di rimanere in esecuzione una volta che ha ricevuto i dati elaborati, ma eventualmente solo di stamparli a console.
+Al client non è richiesto di rimanere in esecuzione una volta che ha ricevuto i dati elaborati e quindi viene terminato una volta svolto il suo compito.
 
-\paragraph{Server} \mbox{}\\
-Il Server deve rispettare determinate caratteristiche:
+\paragraph{Server} \mbox{}\\ \\
+Il Server viene lanciato specificando da shell un nome univoco ed eventualmente lunghezza minima delle chiavi e lunghezza massima di chiavi e messaggi utilizzabili. \\
+Una volta avviato il server svolge le seguenti operazioni:
 \begin{itemize}
-    \item deve essere etichettato con un nome.
-    \item deve rimanere in attesa della "connessione" di un client
-    \item deve poter accettare la "connessione" attraverso un messaggio specifico
-    \item deve poter ricevere i dati dal client per poter procedere all'elaborazione
-    \item in caso di un errore inatteso ( dati in ingresso malformati, errore nel canale di comunicazione, ecc.. ) deve produrre un errore opportuno e comunicarlo al client 
-    \item l'unico caso di terminazione del server è attraverso i segnali di terminazione dei processi del sistema
+    \item rimane in attesa della "connessione" da parte di un client;
+    \item riceve i dati dal client per poter soddisfare la sua richiesta;
+    \item in caso di un errore inatteso ( dati in ingresso malformati, errore nel canale di comunicazione, ecc.. ) produce un errore opportuno e lo comunica al client;
+    \item passa i dati del client ad una terza "entità" (un thread) che procede con l'elaborazione dei dati e manda i risultati al client.
 \end{itemize}
+L'unico caso di terminazione del server è attraverso i segnali di terminazione dei processi del sistema.
 
-\paragraph{Comunicazione}
-\begin{itemize}
-	\item Per gestire i parametri della shell abbiamo scelto di utilizzare la funzione getop long, con la possibilità di utilizzare sia nomi lunghi che brevi, ad esempio per definire il nome del server si può usare --name oppure -n.
-	\item Per gestire la comunicazione abbiamo scelto di usare delle FIFO, per avere la possibilità di accedere ai processi senza che client e server debbano per forza essere in una relazione di parentela.
-	\item Per la comunicazione vera e propria abbiamo stabilito un nostro protocollo, che prevede che entrambi gli estremi della FIFO attendano un primo messaggio nel quale sono indicati i numero di byte del messaggio vero e proprio. Nel dettaglio:
-		\begin{itemize}
-			\item Il client invia al server le dimensione della richiesta che vuole inviare.
-			\item Il client invia al server il messaggio strutturato nel seguente modo (da notare che non tutti i campi sono obbligatori):
-			\item[] \begin{center}
-			\textbf{client's pid | mode;key | input type ; input | output type; output}
+\paragraph{Comunicazione} \mbox{}\\ \\
+Per gestire i parametri della shell abbiamo scelto di utilizzare la funzione getopt long, con la possibilità di utilizzare sia nomi lunghi che brevi, ad esempio per definire il nome del server si può usare --name oppure -n. \\\\
+Per gestire la comunicazione abbiamo scelto di usare delle FIFO, per avere la possibilità di accedere ai processi senza che client e server debbano per forza essere in una relazione di parentela. \\\\
+Per la comunicazione vera e propria abbiamo stabilito un nostro protocollo, che prevede che entrambi gli estremi della FIFO attendano un primo messaggio nel quale sono indicati i numero di byte del messaggio vero e proprio. Nel dettaglio:
+	\begin{itemize}
+		\item Il client invia al server le dimensione della richiesta che vuole inviare.
+		\item Il client invia al server il messaggio strutturato nel seguente modo (da notare che non tutti i campi sono obbligatori):
+			\begin{center}
+				client's pid | mode;key | input type;input | output type;output
 			\end{center}
-			In seguito si mette in attesa della risposta del client.
-			\item il server, dopo aver eseguito l'operazione richiesta dal client, gli invia un messaggio contenente la dimensione del messaggio di risposta. E poi procede all'invio del messaggio vero e proprio. Nel caso in cui il server debba inviare più messaggio di risposta, come nel caso dell'operazione list, ognuno di essi dovrà essere preceduto dalla sua dimensione.
-		\end{itemize}
-\end{itemize}
+		In seguito si mette in attesa della risposta del client.
+		\item il server, dopo aver eseguito l'operazione richiesta dal client, gli invia un messaggio contenente la dimensione del messaggio di risposta. Poi procede all'invio del messaggio vero e proprio. Nel caso in cui il server debba inviare più messaggio di risposta, come nel caso dell'operazione list, ognuno di essi dovrà essere preceduto dalla sua dimensione.
+	\end{itemize}
 \end{document}
