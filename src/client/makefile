@@ -20,6 +20,7 @@ CFLAGS=-Wall -Werror -ansi -pedantic -faggressive-loop-optimizations -O2 \
 	   -Wunreachable-code
 
 SRC=$(wildcard include/*.c)
+OBJS=$(shell ls | grep .o)
 
 .SILENT: description
 .PHONY: description
@@ -35,6 +36,6 @@ dep: $(SRC)
 	$(GCC) $(CFLAGS) -c $^
 
 client: dep
-	$(GCC) $(CFLAGS) client.c -o client $(wildcard *.o)
+	$(GCC) $(CFLAGS) client.c -o client $(OBJS)
 
 

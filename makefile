@@ -30,7 +30,7 @@ SRC=src
 
 # ================================= RULES ======================================
 # specify the silent targets
-.SILENT: description clearbin clearassets clear 
+.SILENT: description clearbin clearassets clearobjs clear 
 
 # default option to make will print description 
 default : description
@@ -85,3 +85,9 @@ clearbin :
 # create will be create 
 clearassets:
 	if [ -d "$(ASSETS)" ]; then rm -rf $(ASSETS); fi
+
+# remove all the objects files in src/ folder
+clearobjs:
+	rm -f src/server/*.o
+	rm -f src/client/*.o
+	rm -f src/util/*.o
