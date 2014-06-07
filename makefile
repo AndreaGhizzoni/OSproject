@@ -51,13 +51,20 @@ description:
 # - compile all the src content
 # - puts executeble files under bin directory 
 bin: clearbin
-	mkdir -p $(BIN) # -p prevents the error message if the directory exist
+	@mkdir -p $(BIN) # -p prevents the error message if the directory exist
+	$(MAKE) -C src/assets/ assets 
+	$(MAKE) -C src/util/ util
+	$(MAKE) -C src/server/ server
+	$(MAKE) -C src/client/ client 
+	@mv src/server/server bin
+	@mv src/client/client bin
 
 # generate an example of input file
 # - dep=clearassets
 # - generate the example file under assets folder 
 assets: clearassets
-	mkdir -p $(ASSETS) # -p prevents the error message if the directory exist
+	@mkdir -p $(ASSETS) # -p prevents the error message if the directory exist
+	$(MAKE) -C src/assets assets run
 
 # test the program with the generated assets
 # - dep=assets bin
