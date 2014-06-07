@@ -18,10 +18,9 @@
 #include "client_care.h"
 #include "server.h"
 #include "../../util/cipher.h"
+#include "../../flags/flags.h"
 
-#define P_DEBUG 1
-
-void manage_encode( int fifo_fd, parsed_msg* p){
+void manage_encode( int fifo_fd, parsed_msg* p ){
     if( p->i_mode == 'm' ){
         if( p->o_mode == 'o' ){
             write_on_file( p->out_file, encode( p->key, p->in_msg ) );
@@ -37,11 +36,11 @@ void manage_encode( int fifo_fd, parsed_msg* p){
     }
 }
 
-void manage_decode( int fifo_fd, parsed_msg* p){
+void manage_decode( int fifo_fd, parsed_msg* p ){
 
 }
 
-void manage_list( int fifo_fd, parsed_msg* p){
+void manage_list( int fifo_fd, parsed_msg* p ){
 
 }
 
@@ -49,7 +48,7 @@ void* pthread_handler(void* p_m){
     int fifo_client_fd;
     parsed_msg* p_msg = p_m;
     /*TODO check if null*/char* fifo_client = fifo_client_path(p_msg->pid);
-    if(P_DEBUG) printf("> fifo path to the client created as %s\n", fifo_client );
+    if(DEB_SERVER) printf("> fifo path to the client created as %s\n", fifo_client );
 
     if( mkfifo( fifo_client, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) ) ){
         if( errno != EEXIST ){
@@ -57,10 +56,10 @@ void* pthread_handler(void* p_m){
             exit(1);
         }
     }
-    if(P_DEBUG) printf("> fifo to the client created..\n");
+    if(DEB_SERVER) printf("> fifo to the client created..\n");
 
     fifo_client_fd = open_fifo_client(fifo_client);
-    if(P_DEBUG) printf("> fifo to the client opened..");
+    if(DEB_SERVER) printf("> fifo to the client opened..");
 
     /*write response to client*/
     if( p_msg->error != NULL ){
@@ -117,11 +116,6 @@ void read_f(char* inf, int max_len, int fifo_fd, char* of, char mode, char* key 
     ssize_t read; 
     size_t len = max_len;
     char* line = NULL;
-
-    if(stream == NULL)
-        printf("fopen ret null on %s\n", inf);
-    else
-        printf("not null");
 
     while( (read = getline(&line, &len, stream) ) != -1 ){
         if( mode == 'e' ){

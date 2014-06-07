@@ -18,8 +18,7 @@
 #include <pthread.h>
 #include "include/server.h"
 #include "include/client_care.h"
-
-#define DEBUG 1
+#include "../flags/flags.h"
 
 /* Global Variableused for signal handler ( I know not a good idea ) */
 Server* server;
@@ -50,7 +49,7 @@ int main(int argc, char** argv){
     int i = 0;
     pthread_t v_t[30];
 
-    if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
+    if(DEB_SERVER) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
     init_handler();
 
     server = alloc_server();
@@ -61,7 +60,7 @@ int main(int argc, char** argv){
     }
     server->encoded_file_path = set_encoded_file(server->args->name);
 
-    if(DEBUG) printf("[INFO] server set properly\n");
+    if(DEB_SERVER) printf("[INFO] server set properly\n");
 
     /* create well known fifo if does’t exist */
     if( mkfifo(server->fifo_path, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) ) { 
@@ -84,14 +83,14 @@ int main(int argc, char** argv){
         buff = (char*)malloc(4069*sizeof(char));
         nbytes = read(fifo_fd, buff, 4); /*read the message length */
         nbytes = read(fifo_fd, buff, atoi(buff)); /*read the message */
-        if(DEBUG){
+        if(DEB_SERVER){
             printf("=== client message recived ===\n");
             printf("nbytes: %d\n", nbytes);
             printf("message: %s\n", buff);
         }
         
         p = read_client_buffer(server->args->name, buff);
-        if(DEBUG){
+        if(DEB_SERVER){
             printf("=== parsed message structure ===\n");
             print_parsed_msg(p);
         }
@@ -115,6 +114,6 @@ Server_args* parse_args(int argc, char** argv){
     if(s == NULL)
         exit(1);
    
-    if(DEBUG) print(s);
+    if(DEB_SERVER) print(s);
     return s;
 }

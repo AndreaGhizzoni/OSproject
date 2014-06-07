@@ -17,8 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-
-#define I_DEBUG 1
+#include "../../flags/flags.h"
 
 char* fifo_server_path(char* name){
     char* path = malloc( sizeof(char)*(strlen("/tmp/.fifo")+strlen(name)+1));
@@ -127,9 +126,9 @@ void read_response( int fifo_fd ){
 
     while(1){
         buff=(char*)malloc(4069*sizeof(char));
-        if(I_DEBUG) printf("========= Tring to read message length\n");
+        if(DEB_CLIENT) printf("========= Tring to read message length\n");
         nbytes = read( fifo_fd, buff, 4);
-        if(I_DEBUG){
+        if(DEB_CLIENT){
             printf("=== Response from pthread ===\n");
             printf("nbytes: %d\n", nbytes);
             printf("buff: %s\n", buff);
@@ -139,7 +138,7 @@ void read_response( int fifo_fd ){
         if(atoi(buff) == -1 ){
             break;
         }else{
-            if(I_DEBUG) printf("=== Tring to read message\n");
+            if(DEB_CLIENT) printf("=== Tring to read message\n");
             nbytes = read( fifo_fd, buff, atoi(buff) );
             
             printf("%s\n", buff);
@@ -156,10 +155,10 @@ void do_all(Client_args* c){
 
     fifo_response_not_found = 1;
     path_response_fifo = fifo_client_path(getpid());
-    if(I_DEBUG)printf("=== Pending for response fifo at %s\n", path_response_fifo);
+    if(DEB_CLIENT)printf("=== Pending for response fifo at %s\n", path_response_fifo);
     while(fifo_response_not_found){
         if( access(path_response_fifo, F_OK) != -1 ){
-            if(I_DEBUG)printf("=== Response fifo find!\n");
+            if(DEB_CLIENT)printf("=== Response fifo find!\n");
             fifo_response_not_found=0;
         }
     }
@@ -169,7 +168,7 @@ void do_all(Client_args* c){
         perror(" Can not open fifo response client <- pthread ");
         exit(1);
     }
-    if(I_DEBUG) printf("=== Response fifo opend!\n");
+    if(DEB_CLIENT) printf("=== Response fifo opend!\n");
     
     read_response(fifo_response);
 }   

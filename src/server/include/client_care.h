@@ -11,13 +11,16 @@
 
 #include "server.h"
 
+/*the handler function of pthread*/
 void* pthread_handler(void*);
 
-void manage_encode( int fifo_fd, parsed_msg* p);
-void manage_decode( int fifo_fd, parsed_msg* p);
-void manage_list( int fifo_fd, parsed_msg* p);
+/*manage the comunicatione to the client according to parsed_msg passed*/
+void manage_encode(int fifo_fd, parsed_msg* p);
+void manage_decode(int fifo_fd, parsed_msg* p);
+void manage_list(int fifo_fd, parsed_msg* p);
 
-void write_on_fifo( int, char* );
+/*write the char* to the fifo_fd passed as int*/
+void write_on_fifo(int, char*);
 
 /*char* file to read
  *int max length of file to read
