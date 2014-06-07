@@ -16,8 +16,9 @@ GCC=gcc
 # -faggressive-loop-optimizations : optimization flag
 # -O2                             : optimization flag
 # -Wunreachable-code              : detects that code will never be executed 
+# -lpthread 	                  : for pthread
 CFLAGS=-Wall -Werror -ansi -pedantic -faggressive-loop-optimizations -O2 \
-	   -Wunreachable-code
+	   -Wunreachable-code 
 
 SRC=$(wildcard include/*.c)
 OBJS=$(shell ls | grep .o)
@@ -40,5 +41,6 @@ dep: $(SRC)
 	$(GCC) $(CFLAGS) -c $^
 
 server: clear dep
-	$(GCC) $(CFLAGS) main.c -o server $(OBJS)
+	$(GCC) $(CFLAGS) main.c -o server $(OBJS) ../util/cipher.o -lpthread
+
 

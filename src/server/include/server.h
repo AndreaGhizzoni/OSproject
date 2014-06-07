@@ -48,7 +48,7 @@ char* set_encoded_file(char*);
 
 /*this function read the char* given as a standard message from client
  * <pid>|<e/d/l>;<key>|<i/m>;<in_file/message>|o;<oit_file>\0*/
-parsed_msg* read_client_buffer(char*, char*, int); 
+parsed_msg* read_client_buffer(char*, char*); 
 
 /*this function check if pid passed as char* is a valid number*/
 void parse_pid(parsed_msg*, char*);

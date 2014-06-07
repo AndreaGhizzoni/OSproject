@@ -6,7 +6,6 @@
 #define MSG_L_MAX        10
 #define N_ASSETS_FILES   10
 #define N_MSG_FOR_ASSETS 7
-#define ASSEST_NAME      "../../assets/input_%d"
 
 char* rand_str(size_t);
 
@@ -17,16 +16,14 @@ int main(int argc, char** argv){
 
     srand(time(NULL));
     for(; i<N_ASSETS_FILES; i++ ){
-        n = malloc( sizeof(char)*(strlen(ASSEST_NAME)));
-        sprintf(n, ASSEST_NAME, i);
-        tmp_f = fopen( n, "a" );
-        
-        /* generate random string and write it in tmp_f */
+        n = malloc( sizeof(char)*(strlen("../../assets/input_%d")));
+        sprintf(n, "../../assets/input_%d", i);
+        tmp_f = fopen( n, "ab+" );
+
         for(; j<N_MSG_FOR_ASSETS; j++)
             fprintf( tmp_f, "%s\n", rand_str( MSG_L_MAX ) );
 
         fflush(tmp_f);
-        /* close tmp_f */
         fclose(tmp_f);
         j=0;
     }
@@ -35,10 +32,9 @@ int main(int argc, char** argv){
 }
 
 char* rand_str( size_t length ){
-    char charset[] = "0123456789"
-                     "abcdefghijklmnopqrstuvwxyz"
+    char charset[] = "abcdefghijklmnopqrstuvwxyz"
                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    char* r = malloc( sizeof(char)*length );
+    char* r = malloc( sizeof(char)*length+1 );
     size_t t;
     int i = 0;
 
@@ -46,7 +42,7 @@ char* rand_str( size_t length ){
         t = rand() % strlen(charset);
         r[i++] = charset[t];
     }
-    r[i] = '\0';
+    r[i+1] = '\0';
 
     return r;
 }

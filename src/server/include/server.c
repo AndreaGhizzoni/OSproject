@@ -63,14 +63,14 @@ char* set_encoded_file(char* server_name){
 }
 
 char* substr(char* msg, int start, int end){
-    char* mode = (char*) malloc( sizeof(char)*(end-start) );
+    char* mode = (char*) malloc( sizeof(char)*(end-start)+1 );
     strncpy(mode, (msg+start), (end-start));
     mode[end-start]='\0';
     return mode;
 }
 
-parsed_msg* read_client_buffer(char* server_name, char* msg, int len) {
-    char *pid=""; char* mode=""; char* input=""; char* output="";
+parsed_msg* read_client_buffer(char* server_name, char* msg) {
+    char *pid="\0"; char* mode="\0"; char* input="\0"; char* output="\0";
     int m=0; int start=0; int end=0;
     parsed_msg* p;
 
@@ -79,6 +79,9 @@ parsed_msg* read_client_buffer(char* server_name, char* msg, int len) {
         while(msg[end]!='|' && msg[end]!='\0') {
             end++;
         }
+        
+        if(start==end+1) /*in case of --list */
+            break;
 
         switch(m){
             case 0:{
@@ -147,6 +150,8 @@ void parse_mode(parsed_msg* p, char* mode){
 }
 
 void parse_input(parsed_msg* p, char* input){
+    if( strcmp(input,"\0") == 0 ) return;/*in case of --list */
+    
     if( input[1] != ';'){
         p->error = "ERROR: Malformed input separator.\0";
     }else{
@@ -163,6 +168,8 @@ void parse_input(parsed_msg* p, char* input){
 }
 
 void parse_output(parsed_msg* p, char* output){
+    if( strcmp( output, "\0" ) == 0 ) return; /*in case of --list */
+
     if(output[0] == ';'){
         p->o_mode = 'c';
     }else{

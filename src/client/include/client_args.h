@@ -10,7 +10,7 @@
 #define CLIENT_ARGS
 
 /*Definizione variabili*/
-#define D_OUTPUT_FILE "output.txt"
+/*#define D_OUTPUT_FILE "output.txt"*/
 #define D_INT_VALUE -2
 #define ENCODE 0
 #define DECODE 1
@@ -37,7 +37,7 @@ Client_args* populate(int, char**);
 int check_key(char*);
 
 /*Sets the default name for the output file*/
-void set_default_outputFile(Client_args*);
+/*void set_default_outputFile(Client_args*);*/
 
 /*return 0 if char* given is a command line argument, otherwise -1 */
 int is_parameter(char*);

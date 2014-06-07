@@ -7,10 +7,11 @@
 char* encode(char* key, char* message) {
     int len = strlen( key );
 	int* int_of_key = intofkey( key );
-    char* encode_msg = malloc( sizeof(char)*len );
+    char* encode_msg = malloc( sizeof(char)*len+1 );
 
 	int i=0; int j=0; int tmp=0;
 	while( message[i] != '\0' ) {
+        if( message[i] == '\n'){i++; continue;}
 		/*se la lettera corrente è maiuscola la porto temporaneamente in 
         minuscolo sottraggo 'a' per avere la posizione nell'alfabeto,
 		sommo la posizione corrente della chiave e sottraggo 
@@ -38,16 +39,18 @@ char* encode(char* key, char* message) {
 		i++;
 	}
 
+    encode_msg[len+1] = '\0';
     return encode_msg;
 }
 
 char* decode(char* key, char* message ){
 	int len = strlen( key );
 	int* int_of_key = intofkey( key );
-    char* decoded_msg = malloc( sizeof(char)*len );
+    char* decoded_msg = malloc( sizeof(char)*len+1 );
 
 	int i=0; int j=0; int tmp=0;
 	while( message[i] != '\0' ) {
+        if( message[i] == '\n'){i++; continue;}
 		/*se la lettera corrente è maiuscola la porto temporaneamente in 
         minuscolo sottraggo 'a' per avere la posizione nell'alfabeto,
 		sottraggo la posizione corrente della chiave e sommo 26 
@@ -76,6 +79,7 @@ char* decode(char* key, char* message ){
 		i++;
 	}
 
+    decoded_msg[len+1] = '\0';
     return decoded_msg;
 }
 

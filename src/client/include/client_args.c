@@ -19,13 +19,13 @@ static struct option long_options[]={
     {"key"    , required_argument, 0, 'k'},
     {"file"   , required_argument, 0, 'f'},
     {"message", required_argument, 0, 'm'},
-    {"output" , optional_argument, NULL, 'o'},
+    {"output" , required_argument, 0, 'o'},
     {"encode" , no_argument, 0, 'e'},
     {"decode" , no_argument, 0, 'd'},
     {"list"   , no_argument, 0, 'l'},
     {0,0,0,0}
 };
-const char* shortopts = "n:o::k:f:m:edl";
+const char* shortopts = "n:o:k:f:m:edl";
 
 Client_args* alloc() {
 	Client_args* c = (Client_args*) malloc( sizeof(Client_args) );
@@ -43,7 +43,7 @@ Client_args* alloc() {
 Client_args* populate(int argc, char** argv){
     int a, err;
     int option_index = 0; /*getopt_long stores the option index here. */
-    Client_args* c;
+    Client_args* c = alloc();
     
     /*if argc == 1 means that no argument passing*/
     if(argc==1){
@@ -51,7 +51,6 @@ Client_args* populate(int argc, char** argv){
         return NULL;
     }
 
-    c = alloc();
     err=0;
     while(1){
         a = getopt_long( argc, argv, shortopts, long_options, &option_index );
@@ -93,11 +92,9 @@ Client_args* populate(int argc, char** argv){
                 break;
 
             case 'o':
-                if(!optarg)
-                    set_default_outputFile(c);
-                else
-                    if( (c->output = realpath(optarg, NULL) ) == NULL )
-                        print_err(&err, "'--output'","output file not found");
+                fclose(fopen(optarg, "ab+"));
+                if( (c->output = realpath(optarg, NULL) ) == NULL )
+                    print_err(&err, "'--output'","output file not found");
                 break;
 
             case 'e':
@@ -153,7 +150,7 @@ int check_key(char* key) {
 	return 0;
 }
 
-void set_default_outputFile(Client_args* c) {											
+/*void set_default_outputFile(Client_args* c){
 	char* cn = malloc( sizeof(char)*(strlen(D_OUTPUT_FILE)+6));
 	sprintf(cn, "%d", getpid());
 	strcat(cn, D_OUTPUT_FILE);
@@ -161,7 +158,7 @@ void set_default_outputFile(Client_args* c) {
 
     cn = realpath(cn, NULL);
 	c->output=cn;
-}
+}*/
 
 int is_parameter(char* s){
     if(s[0]=='-')

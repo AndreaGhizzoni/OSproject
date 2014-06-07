@@ -15,7 +15,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <pthread.h>
 #include "include/server.h"
+#include "include/client_care.h"
 
 #define DEBUG 1
 
@@ -43,8 +45,12 @@ void init_handler();
 int main(int argc, char** argv){
     int nbytes; 
     char* buff; 
-    if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
+    parsed_msg* p;
 
+    int i = 0;
+    pthread_t v_t[30];
+
+    if(DEBUG) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
     init_handler();
 
     server = alloc_server();
@@ -66,20 +72,32 @@ int main(int argc, char** argv){
     }
     printf(">>>> Server is running with name: %s\n", server->args->name );
     
+    /*rw because doesn't work without it*/
     fifo_fd = open( server->fifo_path, O_RDWR );
     if( fifo_fd < 0 ){
         perror( " Cannot open read only well known fifo " );
         exit(1);
     }
     
-    
     /* Main body loop */
     while(1){
         buff = (char*)malloc(4069*sizeof(char));
         nbytes = read(fifo_fd, buff, 4); /*read the message length */
         nbytes = read(fifo_fd, buff, atoi(buff)); /*read the message */
-        printf("%s\n", buff);
-        printf("%d\n", nbytes);
+        if(DEBUG){
+            printf("=== client message recived ===\n");
+            printf("nbytes: %d\n", nbytes);
+            printf("message: %s\n", buff);
+        }
+        
+        p = read_client_buffer(server->args->name, buff);
+        if(DEBUG){
+            printf("=== parsed message structure ===\n");
+            print_parsed_msg(p);
+        }
+        
+        pthread_create(&v_t[i++], NULL, &pthread_handler, (void*)p );
+
         free(buff);
     }
 
