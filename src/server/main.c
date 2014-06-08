@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -44,7 +45,7 @@ int main(int argc, char** argv){
     char* buff; 
     parsed_msg* p;
 
-    int i = 0;
+    int i=0;
     pthread_t v_t[30];
 
     if(DEB_SERVER) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
@@ -93,7 +94,20 @@ int main(int argc, char** argv){
             print_parsed_msg(p);
         }
         
+        /*check params of server*/
+        if( p->in_msg != NULL ){
+            if( strlen(p->in_msg) > server->args->msgmax )
+                p->error = "ERROR: Server rejected message. Reason too long.";
+        }
+        if( p->key != NULL ){
+            if( strlen(p->key) < server->args->keymin )
+                p->error = "ERROR: Server rejected key. Reason too short.";
+            else if( strlen(p->key) > server->args->keymax )
+                p->error = "ERROR: Server rejected key. Reason too long.";
+        }
+        
         pthread_create(&v_t[i++], NULL, &pthread_handler, (void*)p );
+        if(i>=30)i=0;
 
         free(buff);
     }

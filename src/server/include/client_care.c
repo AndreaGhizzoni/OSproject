@@ -23,11 +23,15 @@
 void manage_encodedecode( int fifo_fd, parsed_msg* p, char mode ){
     if( p->i_mode == 'm' ){
         if( p->o_mode == 'o' ){
-            if(mode == 'e') write_on_file( p->out_file, encode( p->key, p->in_msg ) );
-            else if(mode == 'd') write_on_file( p->out_file, decode( p->key, p->in_msg ) );
+            if(mode == 'e') 
+                write_on_file( p->out_file, encode( p->key, p->in_msg ) );
+            else if(mode == 'd') 
+                write_on_file( p->out_file, decode( p->key, p->in_msg ) );
         }else if( p->o_mode == 'c'){
-            if(mode == 'e') write_on_fifo(fifo_fd, encode(p->key,p->in_msg) ); 
-            else if(mode == 'd') write_on_fifo(fifo_fd, decode(p->key,p->in_msg) );
+            if(mode == 'e') 
+                write_on_fifo(fifo_fd, encode(p->key,p->in_msg) ); 
+            else if(mode == 'd') 
+                write_on_fifo(fifo_fd, decode(p->key,p->in_msg) );
         }
     }else if( p->i_mode == 'i'){
         if( p->o_mode == 'c' ){
@@ -73,9 +77,10 @@ void* pthread_handler(void* p_m){
             case 'l': manage_list(fifo_client_fd, p_msg); break;
             default: write_on_fifo( fifo_client_fd, "ERROR\0");
         }
-        write_on_fifo( fifo_client_fd, NULL );
     }
 
+    /*send termination message and unlink the fifo*/
+    write_on_fifo( fifo_client_fd, NULL );
     unlink(fifo_client);
     return NULL;
 }

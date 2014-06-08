@@ -116,7 +116,7 @@ parsed_msg* read_client_buffer(char* server_name, char* msg) {
 
     parse_output(p, output);
     if(p->error != NULL) return p;
-
+    
     p->server_name = server_name;
 
     return p;
