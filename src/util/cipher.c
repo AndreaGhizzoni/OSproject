@@ -6,8 +6,9 @@
 
 char* encode(char* key, char* message) {
     int len = strlen( key );
+    int len_msg = strlen( message );
 	int* int_of_key = intofkey( key );
-    char* encode_msg = malloc( sizeof(char)*len+1 );
+    char* encode_msg = (char*)malloc( sizeof(char)*len_msg+1);
 
 	int i=0; int j=0; int tmp=0;
 	while( message[i] != '\0' ) {
@@ -39,14 +40,15 @@ char* encode(char* key, char* message) {
 		i++;
 	}
 
-    encode_msg[len+1] = '\0';
+    encode_msg[len_msg+1] = '\0';
     return encode_msg;
 }
 
 char* decode(char* key, char* message ){
 	int len = strlen( key );
+    int len_msg = strlen( message );
 	int* int_of_key = intofkey( key );
-    char* decoded_msg = malloc( sizeof(char)*len+1 );
+    char* decoded_msg = (char*)malloc( sizeof(char)*len_msg+1);
 
 	int i=0; int j=0; int tmp=0;
 	while( message[i] != '\0' ) {
@@ -79,7 +81,7 @@ char* decode(char* key, char* message ){
 		i++;
 	}
 
-    decoded_msg[len+1] = '\0';
+    decoded_msg[len_msg+1] = '\0';
     return decoded_msg;
 }
 
