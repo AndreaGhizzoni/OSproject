@@ -20,23 +20,22 @@
 #include "../../util/cipher.h"
 #include "../../flags/flags.h"
 
-void manage_encode( int fifo_fd, parsed_msg* p ){
+void manage_encodedecode( int fifo_fd, parsed_msg* p, char mode ){
     if( p->i_mode == 'm' ){
         if( p->o_mode == 'o' ){
-            write_on_file( p->out_file, encode( p->key, p->in_msg ) );
+            if(mode == 'e') write_on_file( p->out_file, encode( p->key, p->in_msg ) );
+            else if(mode == 'd') write_on_file( p->out_file, decode( p->key, p->in_msg ) );
         }else if( p->o_mode == 'c'){
-            write_on_fifo(fifo_fd, encode(p->key,p->in_msg) ); 
+            if(mode == 'e') write_on_fifo(fifo_fd, encode(p->key,p->in_msg) ); 
+            else if(mode == 'd') write_on_fifo(fifo_fd, decode(p->key,p->in_msg) );
         }
     }else if( p->i_mode == 'i'){
         if( p->o_mode == 'c' ){
-            read_f( p->in_file, 100, fifo_fd, NULL, 'e', p->key );
+            read_f( p->in_file, 100, fifo_fd, NULL, mode, p->key );
         }else if( p->o_mode == 'o' ){
-            read_f( p->in_file, 100, fifo_fd, p->out_file, 'e', p->key );
+            read_f( p->in_file, 100, fifo_fd, p->out_file, mode, p->key );
         }
     }
-}
-
-void manage_decode( int fifo_fd, parsed_msg* p ){
 
 }
 
@@ -47,7 +46,10 @@ void manage_list( int fifo_fd, parsed_msg* p ){
 void* pthread_handler(void* p_m){
     int fifo_client_fd;
     parsed_msg* p_msg = p_m;
-    /*TODO check if null*/char* fifo_client = fifo_client_path(p_msg->pid);
+    char* fifo_client = fifo_client_path(p_msg->pid);
+    if( fifo_client == NULL ) /*if is NULL there is another pthread thar is responding to client*/
+        return NULL;
+
     if(DEB_SERVER) printf("> fifo path to the client created as %s\n", fifo_client );
 
     if( mkfifo( fifo_client, (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) ) ){
@@ -66,15 +68,15 @@ void* pthread_handler(void* p_m){
         write_on_fifo( fifo_client_fd, p_msg->error );
     }else{
         switch(p_msg->what_to_do){
-            case 'e': manage_encode(fifo_client_fd, p_msg); break;
-            case 'd': manage_decode(fifo_client_fd, p_msg); break;
+            case 'e': manage_encodedecode(fifo_client_fd, p_msg, 'e'); break;
+            case 'd': manage_encodedecode(fifo_client_fd, p_msg, 'd'); break;
             case 'l': manage_list(fifo_client_fd, p_msg); break;
             default: write_on_fifo( fifo_client_fd, "ERROR\0");
         }
         write_on_fifo( fifo_client_fd, NULL );
     }
 
-    /*TODO unlink and remove response fifo*/
+    unlink(fifo_client);
     return NULL;
 }
 

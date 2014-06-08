@@ -171,4 +171,6 @@ void do_all(Client_args* c){
     if(DEB_CLIENT) printf("=== Response fifo opend!\n");
     
     read_response(fifo_response);
+    unlink(path_response_fifo);
+    remove(path_response_fifo);
 }   

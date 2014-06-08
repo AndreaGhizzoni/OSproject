@@ -26,12 +26,10 @@ int fifo_fd;
 
 /* HANDLER FUNCTION FOR SIGNAL */
 void handle_function(){
-    printf("\nSignal get\n");
-    /*close the fifo*/
-    close(fifo_fd);
-    /*unlink the fifo*/
-    unlink(server->fifo_path);
-    /*if unlink operation dosn't remove fifo file, remove it*/
+    if(DEB_SERVER)printf("\n=== Signal get! Server is cleaning his mess and stop ===\n");
+    close(fifo_fd); /*close the fifo*/
+    unlink(server->fifo_path); /*unlink the fifo*/
+    /*if unlink operation dosn't remove fifo, remove it*/
     remove(server->fifo_path);
     remove(server->encoded_file_path);
     exit(0);

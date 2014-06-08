@@ -15,8 +15,7 @@
 void* pthread_handler(void*);
 
 /*manage the comunicatione to the client according to parsed_msg passed*/
-void manage_encode(int fifo_fd, parsed_msg* p);
-void manage_decode(int fifo_fd, parsed_msg* p);
+void manage_encodedecode(int, parsed_msg*, char);
 void manage_list(int fifo_fd, parsed_msg* p);
 
 /*write the char* to the fifo_fd passed as int*/
