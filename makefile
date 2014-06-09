@@ -1,6 +1,6 @@
 # ================================ AUTHORS =====================================
-#Federica Lago 157955
 #Andrea Ghizzoni 157507
+#Federica Lago 157955
 #PROJECT: #1 CODEC
 #COURSE: Sistemi Operativi
 #YEAR: 2014
@@ -21,7 +21,11 @@ CFLAGS=-Wall -Werror -ansi -pedantic -faggressive-loop-optimizations -O2 \
 
 # ================================= DESCRIPTION =====================================
 DESCR = "This project allows some clients to ask services to servers as encode or decode messages and list all the messeges encoded on one of them."
-TARGETS = "Aviable targets are BIN, which generetes executable binary files, ASSETS, which generets possible inputs, and CLEAN to remove every temporary file. Use TEST target to call all previous targets and start running the programm."
+TARGETS = "Aviable targets:"
+T_BIN="make bin -> generates executable binary files"
+T_RES="make res -> generets possible inputs"
+T_TEST="make test -> calls the targets bin and res, then runs the programm"
+T_CLEAR="make clear -> removes every temoprary file or directory"
 
 # ================================= FOLDER =====================================
 BIN=bin
@@ -45,6 +49,10 @@ description:
 	echo $(DESCR)
 	echo ""
 	echo $(TARGETS)
+	echo $(T_BIN)
+	echo $(T_RES)
+	echo $(T_TEST)
+	echo $(T_CLEAR)
 
 # compile all the src files and puts objects into bin/
 # - dep=clearbin 
