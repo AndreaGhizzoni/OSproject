@@ -29,7 +29,7 @@ OBJS=$(shell ls | grep .o)
 default: description
 
 description:
-	echo "Makefile to compile all the server dep. Usage:"
+	echo "Makefile to compile all the server dep and the server itself. Usage:"
 	echo "> make dep    -> to compile all the server dep."
 	echo "> make server -> to compile the server with all the dep."
 	echo "> make clear  -> clear all objects file in root directory"

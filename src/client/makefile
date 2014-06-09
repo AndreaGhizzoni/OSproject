@@ -28,7 +28,7 @@ OBJS=$(shell ls | grep .o)
 default: description
 
 description:
-	echo "Makefile to compile all the client dep. Usage:"
+	echo "Makefile to compile all the client dep and the client itself. Usage:"
 	echo "> make dep    -> to compile all the client dep."
 	echo "> make client -> to compile the client with all the dep."
 

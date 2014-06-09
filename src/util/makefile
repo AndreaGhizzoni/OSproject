@@ -29,7 +29,7 @@ default: description
 
 description:
 	echo "Makefile to compile the utilities modules. Usage:"
-	echo "> make util   -> to compile the utilities."
+	echo "> make util -> to compile the utilities."
 
 util: $(SRC)
 	@rm -f $(OBJS)

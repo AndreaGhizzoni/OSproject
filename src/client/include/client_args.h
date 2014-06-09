@@ -10,7 +10,6 @@
 #define CLIENT_ARGS
 
 /*Definizione variabili*/
-/*#define D_OUTPUT_FILE "output.txt"*/
 #define D_INT_VALUE -2
 #define ENCODE 0
 #define DECODE 1

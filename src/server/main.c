@@ -48,7 +48,7 @@ int main(int argc, char** argv){
     int i=0;
     pthread_t v_t[30];
 
-    if(DEB_SERVER) printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
+    if(DEB_SERVER)printf("[!!!] SERVER IS RUNNING IN DEBUG MODE [!!!]\n");
     init_handler();
 
     server = alloc_server();
@@ -68,7 +68,7 @@ int main(int argc, char** argv){
             exit(1);
         }
     }
-    printf("[INFO] Server is running with name: %s\n", server->args->name );
+    if(DEB_SERVER)printf("[INFO] Server is running with name: %s\n", server->args->name);
     
     /*rw because doesn't work without it*/
     fifo_fd = open( server->fifo_path, O_RDWR );

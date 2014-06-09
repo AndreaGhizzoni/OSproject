@@ -6,9 +6,6 @@
 # YEAR: 2014
 =============================================================================*/
 
-#include "client_args.h"
-#include "interaction.h"
-#include <limits.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -17,7 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include "client_args.h"
+#include "interaction.h"
 #include "../../flags/flags.h"
+
 
 char* fifo_server_path(char* name){
     char* path = malloc( sizeof(char)*(strlen("/tmp/.fifo")+strlen(name)+1));

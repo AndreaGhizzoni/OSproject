@@ -6,13 +6,13 @@
 # YEAR: 2014
 =============================================================================*/
 
-#include "client_args.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <getopt.h>
 #include <ctype.h>
 #include <unistd.h>
+#include "client_args.h"
 
 static struct option long_options[]={
     {"name"   , required_argument, 0, 'n'},
@@ -99,7 +99,7 @@ Client_args* populate(int argc, char** argv){
 
             case 'e':
                 if(c->op != D_INT_VALUE){
-                    printf("error: '--encode' could not be set: '--decode' or '--list' is already set");
+                    printf("[ERR] '--encode' could not be set: '--decode' or '--list' is already set");
                     err=-1;
                 }else{
                     c->op = ENCODE;
@@ -108,7 +108,7 @@ Client_args* populate(int argc, char** argv){
 
             case 'd':
                 if(c->op != D_INT_VALUE){
-                    printf("error: '--decode' could not be set: '--encode' or '--list' is already set");
+                    printf("[ERR] '--decode' could not be set: '--encode' or '--list' is already set");
                     err=-1;
                 }else{
                     c->op = DECODE;
@@ -117,7 +117,7 @@ Client_args* populate(int argc, char** argv){
 
             case 'l':
                 if(c->op != D_INT_VALUE){
-                    printf("error: '--list' could not be set: '--encode' or '--decode' is already set");
+                    printf("[ERR] '--list' could not be set: '--encode' or '--decode' is already set");
                     err=-1;
                 }else{
                     c->op = LIST;
@@ -150,16 +150,6 @@ int check_key(char* key) {
 	return 0;
 }
 
-/*void set_default_outputFile(Client_args* c){
-	char* cn = malloc( sizeof(char)*(strlen(D_OUTPUT_FILE)+6));
-	sprintf(cn, "%d", getpid());
-	strcat(cn, D_OUTPUT_FILE);
-    fclose(fopen(cn, "w"));
-
-    cn = realpath(cn, NULL);
-	c->output=cn;
-}*/
-
 int is_parameter(char* s){
     if(s[0]=='-')
         return 0;
@@ -183,7 +173,7 @@ void print_usage(){
 }
 
 void print_err(int* err, char* from, char* msg){
-    printf("error: value of %s: %s\n", from, msg);
+    printf("[ERR] value of %s: %s\n", from, msg);
     *err=-1;
 }
 
@@ -200,23 +190,23 @@ void print(Client_args* c){
 
 int check_arguments(Client_args* c) {
     if(c->nameServer == NULL){
-        printf("error: argument missing '--name'\n");
+        printf("[ERR] argument missing '--name'\n");
         return -1;
     }
 
     if(c->op == D_INT_VALUE){
-        printf("error: argument missing '--encode' || '--decode' || '--list'\n");
+        printf("[ERR] argument missing '--encode' || '--decode' || '--list'\n");
         return -1;
     }     
 
     if(c->op == ENCODE || c->op == DECODE ){
         if(c->key == NULL){
-            printf("error: argument missing '--key'\n");
+            printf("[ERR] argument missing '--key'\n");
             return -1;
         }
 
         if(c->isFile == D_INT_VALUE){
-            printf("error: argument missing '--file' || '--message'\n");
+            printf("[ERR] argument missing '--file' || '--message'\n");
             return -1;
         }
     }
