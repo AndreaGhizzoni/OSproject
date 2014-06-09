@@ -30,9 +30,9 @@ Prima di presentare la soluzione riportiamo in seguito la gerarchia delle cartel
         \item /client contiene tutti i file per compilare il client
         \item /util contiene tutte le utility necessarie sia al client che al server.
         \item /flags contiene alcuni flag utilizzati nei programmi (es: flag modalità debug)
-        \item /assets contiene i sorgenti del programma generatore degli assets
+        \item /res contiene i sorgenti del programma generatore degli res
     \end{itemize}
-    \item /assets contiene degli esempi di input file generati automaticamente dal comando make assets
+    \item /res contiene degli esempi di input file generati automaticamente dal comando make res
     \item /bin contiene i binari del server e del client dopo il comando make bin
 \end{itemize}
 
@@ -42,9 +42,10 @@ Di seguito verrà elencata la nostra soluzione distinguendo tra makefile, client
 Sono presenti, oltre ad una breve descrizione iniziale, tutti i target richiesti nel testo del progetto: 
     	\begin{itemize}
     		\item make: senza altri parametri genera una breve descrizione del progetto e degli altri target disponibili.
-   		\item bin: bin, che deve generare i binari compilati eseguibili. Questo target non eseguirà direttamente la compilazione del client e del server, ma richiamerà i makefile dei rispettivi programmi, i quali compileranno tutte le dipendenze e poi il programma stesso. Ad esempio: nella cartella src/server è presente un makefile con tre target: description, dep e server: la prima semplicemente stampa una descrizione del makefile, la seconda compila tutte le dipendenze del server contenute nella cartella include e, infine, il target server compila appunto il server con tutte le dipendenze. 
-    		\item assets: compila ed esegue il programma che genera automaticamente dei possibili messaggi di input. Le "parole" generate non appartengono ad una lingua, ma servono solo per testare il funzionamento delle funzioni encode e decode.
-    		\item test: richiama i target bin ed assets ed avvia l'esecuzione del programma.
+   		\item bin: bin, deve generare i binari compilati eseguibili. Questo target non eseguirà direttamente la compilazione del client e del server, ma richiamerà i makefile dei rispettivi programmi, i quali compileranno tutte le dipendenze e poi il programma stesso. Ad esempio: nella cartella src/server è presente un makefile con tre target: description, dep e server: la prima semplicemente stampa una descrizione del makefile, la seconda compila tutte le dipendenze del server contenute nella cartella include e, infine, il target server compila appunto il server con tutte le dipendenze. \\
+   		Inoltre richiama il target res.
+    		\item res: compila ed esegue il programma che genera automaticamente dei possibili messaggi di input. Le "parole" generate non appartengono ad una lingua, ma servono solo per testare il funzionamento delle funzioni encode e decode.
+    		\item test: richiama i target bin ed res ed avvia l'esecuzione del programma.
     		\item clear: elimina ogni file automaticamente generato o temporaneo.
     	\end{itemize}
 Il compilatore gcc e' stato messo in condizioni di evidenziare più errori possibili e in modo da seguire lo standard ANSI C:
@@ -85,7 +86,7 @@ Il client accentta i seguenti parametri \\
 Al client non è richiesto di rimanere in esecuzione una volta che ha ricevuto i dati elaborati e quindi viene terminato una volta svolto il suo compito.
 
 \paragraph{Server} \mbox{}\\ \\
-Il server accetta i seguenti parametri:\\
+Il server accetta i seguenti parametri:
 
 \begin{center}
     \begin{tabular}{| >{\centering\arraybackslash}m{2.5cm} | >{\centering\arraybackslash}m{2.5cm} | m{9cm}|}
