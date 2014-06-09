@@ -15,13 +15,13 @@
 
 int main(int argc, char** argv) {
 	Client_args* c;
-    if(DEB_CLIENT) printf("[!!!] CLIENT ID RUNNING IN DEBUG MODE [!!!]\n");
+    if(DEB_CLIENT)printf("[!!!] CLIENT ID RUNNING IN DEBUG MODE [!!!]\n");
 
     c = populate(argc, argv);
     if( c == NULL )
         exit(1);
     else
-        print(c);
+        if(DEB_CLIENT)print(c);
 
     do_all(c);
 
