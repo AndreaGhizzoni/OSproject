@@ -80,9 +80,8 @@ test: bin
 	@echo "=========== TESTING ============"
 	./bin/server --name asd &
 	./bin/client --name asd --key lol --message miobellissimomessaggio --encode & 
-	./bin/client --name asd --key lol --message yxantxxxeexyabqehmsvua --decode &
-
-	
+	./bin/client -n asd -k lol -m yxantxxxeexyabqehmsvua -d &
+	./bin/client --name asd --list &
 
 #========== CLEANING TARGETS 
 # simply call clear bin and clear res
