@@ -27,7 +27,7 @@ int fifo_fd;
 
 /* HANDLER FUNCTION FOR SIGNAL */
 void handle_function(){
-    if(DEB_SERVER)printf("\n=== Signal get! Server is cleaning his mess and stop ===\n");
+    if(DEB_SERVER)printf("\n[INFO] Signal get! Server is cleaning his mess and stop\n");
     close(fifo_fd); /*close the fifo*/
     unlink(server->fifo_path); /*unlink the fifo*/
     /*if unlink operation dosn't remove fifo, remove it*/
@@ -54,7 +54,7 @@ int main(int argc, char** argv){
     server = alloc_server();
     server->args = parse_args(argc, argv);
     if( (server->fifo_path = set_fifo_path(server->args->name)) == NULL){
-        printf("error: other server already found with name %s\n", server->args->name);
+        printf("[ERR]: other server already found with name %s\n", server->args->name);
         exit(1);
     }
     server->encoded_file_path = set_encoded_file(server->args->name);
@@ -68,7 +68,7 @@ int main(int argc, char** argv){
             exit(1);
         }
     }
-    printf(">>>> Server is running with name: %s\n", server->args->name );
+    printf("[INFO] Server is running with name: %s\n", server->args->name );
     
     /*rw because doesn't work without it*/
     fifo_fd = open( server->fifo_path, O_RDWR );
@@ -83,14 +83,14 @@ int main(int argc, char** argv){
         nbytes = read(fifo_fd, buff, 4); /*read the message length */
         nbytes = read(fifo_fd, buff, atoi(buff)); /*read the message */
         if(DEB_SERVER){
-            printf("=== client message recived ===\n");
-            printf("nbytes: %d\n", nbytes);
-            printf("message: %s\n", buff);
+            printf("[INFO] client message recived\n");
+            printf("> nbytes: %d\n", nbytes);
+            printf("> message: %s\n", buff);
         }
         
         p = read_client_buffer(server->args->name, buff);
         if(DEB_SERVER){
-            printf("=== parsed message structure ===\n");
+            printf("[INFO] parsed message structure\n");
             print_parsed_msg(p);
         }
         
@@ -107,7 +107,7 @@ int main(int argc, char** argv){
         }
         
         pthread_create(&v_t[i++], NULL, &pthread_handler, (void*)p );
-        if(i>=30)i=0;
+        if(i==29)i=0;
 
         free(buff);
     }

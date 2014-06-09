@@ -62,7 +62,7 @@ bin: clearbin
 # generate an example of input file
 # - dep=clearassets
 # - generate the example file under assets folder 
-assets: clearassets
+res: clearassets
 	@mkdir -p $(ASSETS) # -p prevents the error message if the directory exist
 	$(MAKE) -C src/assets assets run
 

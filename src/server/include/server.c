@@ -80,9 +80,11 @@ parsed_msg* read_client_buffer(char* server_name, char* msg) {
             end++;
         }
         
-        if(start==end+1) /*in case of --list */
-            break;
-
+        if(start==end+1){ /*in case of --list */
+            m++;
+            end++;
+            continue;
+        }
         switch(m){
             case 0:{
                 pid = substr(msg, start, end);
@@ -111,8 +113,10 @@ parsed_msg* read_client_buffer(char* server_name, char* msg) {
     parse_mode(p, mode);
     if(p->error != NULL) return p;
 
-    parse_input(p, input);
-    if(p->error != NULL) return p;
+    if( p->what_to_do != 'l' ){
+        parse_input(p, input);
+        if(p->error != NULL) return p;
+    }
 
     parse_output(p, output);
     if(p->error != NULL) return p;

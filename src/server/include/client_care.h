@@ -26,11 +26,17 @@ void write_on_fifo(int, char*);
  *int fifo_fd of client
  *char* output file
  *char 'e' || 'd' || 'l'
- *char* the key to encode or decode*/
-void read_f(char*, int, int, char*,char, char*);
+ *char* the key to encode or decode
+ *char* the server name */
+void read_f(char*, int, int, char*,char, char*, char*);
 
 /*write a message given on file, first arg is message. second the file path*/
 void write_on_file(char*, char*);
+
+/*write the message on encoded server list.
+ *first argument is the message
+ *second is the server name*/
+void write_on_encoded_file(char*, char*);
 
 /*this function create the client fifo path from the char* of 
  * pid in /tmp/pid.fifo*/

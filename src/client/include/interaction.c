@@ -28,7 +28,7 @@ char* fifo_server_path(char* name){
 int open_fifo_server(char* nameFifoServer){
     int fifo_server = open(nameFifoServer, O_WRONLY);
     if (fifo_server < 0) { 
-        perror("Cannot open well known fifo"); 
+        perror(" Cannot open well known fifo "); 
         exit(-1); 
     }
     return fifo_server;
@@ -48,25 +48,22 @@ char* fifo_client_path(int pId){
 int open_fifo_client(char* fifoname){
     int fifo_client = open(fifoname, O_RDWR);
     if( fifo_client < 0 ){ 
-        perror("Cannot open fifo client"); 
+        perror(" Cannot open fifo client "); 
         exit(-1); 
     }
     return fifo_client;
 }
 
 char* format_buffer(Client_args* c){
-    char *pid, *mode, *input, *output, *msg;
+    char* pid="\0"; char* mode="\0"; char* input="\0"; 
+    char* output="\0"; char* msg="\0";
     int lenall;
 
     pid = malloc( sizeof(char)*6);
     sprintf(pid, "%d", getpid());
 
     if( c->op==-1 ){
-        mode = malloc( sizeof(char)*strlen("l;")+1);
-        sprintf(mode, "l;");
-        lenall = strlen(pid)+ strlen(mode)+3;
-        msg = malloc( sizeof(char)*lenall );
-        sprintf(msg, "%s|%s||", pid, mode);
+        mode = "l;\0";
     }else{                
         mode = malloc( sizeof(char)*(strlen(c->key)+3));
         if(c->op==0)
@@ -81,19 +78,21 @@ char* format_buffer(Client_args* c){
             input = malloc( sizeof(char)*(strlen(c->fileName)+3));
             sprintf(input, "i;%s", c->fileName);
         }
-
-        if(c->output==NULL){
-            output = malloc( sizeof(char)*2);
-            sprintf(output, ";");
-        }else{
-            output = malloc( sizeof(char)*(strlen(c->output)+3));
-            sprintf(output, "o;%s", c->output);
-        }
-
-        lenall = strlen(pid)+strlen(mode)+strlen(input)+strlen(output)+4;
-        msg = malloc( sizeof(char)*lenall );
-        sprintf(msg, "%s|%s|%s|%s", pid, mode, input, output);
     }
+
+    if(c->output==NULL){
+        output = malloc( sizeof(char)*2 );
+        sprintf(output, ";");
+    }else{
+        output = malloc( sizeof(char)*(strlen(c->output)+3));
+        sprintf(output, "o;%s", c->output);
+    }
+
+    lenall = strlen(pid)+strlen(mode)+strlen(input)+strlen(output)+4;
+    msg = malloc( sizeof(char)*lenall );
+    sprintf(msg, "%s|%s|%s|%s", pid, mode, input, output);
+
+    if(DEB_CLIENT) printf("[INFO] message build as %s\n", msg);
     return msg;
 }
 
@@ -109,14 +108,14 @@ void send_request(Client_args* c, int fifo_server){
     sprintf(buffer, "%d", msg_size);
     nread = write(fifo_server, buffer, 4);
     if( nread == -1 ){
-        printf("error first nread" );
+        printf("[ERR] Error send size of message client -> server\n" );
         exit(1);
     }
 
     sprintf(buffer, "%s", message);
     nread = write(fifo_server, buffer, msg_size); 
     if( nread == -1 ){
-        printf("error second nread" );
+        printf("[ERR] Error send message client -> server\n" );
         exit(1);
     }
 }
@@ -126,19 +125,19 @@ void read_response( int fifo_fd ){
 
     while(1){
         buff=(char*)malloc(4069*sizeof(char));
-        if(DEB_CLIENT) printf("========= Tring to read message length\n");
+        if(DEB_CLIENT) printf("[INFO] Tring to read size of message\n");
         nbytes = read( fifo_fd, buff, 4);
         if(DEB_CLIENT){
-            printf("=== Response from pthread ===\n");
-            printf("nbytes: %d\n", nbytes);
-            printf("buff: %s\n", buff);
+            printf("> nbytes: %d\n", nbytes);
+            printf("> buff: %s\n", buff);
         }
         
         /* end of comunication */
         if(atoi(buff) == -1 ){
+            if(DEB_CLIENT) printf("[INFO] End comunication with server\n");
             break;
         }else{
-            if(DEB_CLIENT) printf("=== Tring to read message\n");
+            if(DEB_CLIENT) printf("[INFO] Tring to read message\n");
             nbytes = read( fifo_fd, buff, atoi(buff) );
             
             printf("%s\n", buff);
