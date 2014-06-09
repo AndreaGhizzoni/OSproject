@@ -16,8 +16,8 @@ int main(int argc, char** argv){
 
     srand(time(NULL));
     for(; i<N_ASSETS_FILES; i++ ){
-        n = malloc( sizeof(char)*(strlen("../../assets/input_%d")));
-        sprintf(n, "../../assets/input_%d", i);
+        n = malloc( sizeof(char)*(strlen("../../res/input_%d")));
+        sprintf(n, "../../res/input_%d", i);
         tmp_f = fopen( n, "ab+" );
 
         for(; j<N_MSG_FOR_ASSETS; j++)

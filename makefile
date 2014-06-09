@@ -29,12 +29,12 @@ T_CLEAR="make clear -> removes every temoprary file or directory"
 
 # ================================= FOLDER =====================================
 BIN=bin
-ASSETS=assets
+RES=res
 SRC=src
 
 # ================================= RULES ======================================
 # specify the silent targets
-.SILENT: description clearbin clearassets clearobjs clear 
+.SILENT: description clearbin clearres clearobjs clear 
 
 # default option to make will print description 
 default : description
@@ -55,12 +55,11 @@ description:
 	echo $(T_CLEAR)
 
 # compile all the src files and puts objects into bin/
-# - dep=clearbin 
+# - dep=clear res
 # - compile all the src content
 # - puts executeble files under bin directory 
-bin: clearbin
+bin: clear res
 	@mkdir -p $(BIN) # -p prevents the error message if the directory exist
-	$(MAKE) -C src/assets/ assets 
 	$(MAKE) -C src/util/ util
 	$(MAKE) -C src/server/ server
 	$(MAKE) -C src/client/ client 
@@ -68,31 +67,37 @@ bin: clearbin
 	@mv src/client/client bin
 
 # generate an example of input file
-# - dep=clearassets
-# - generate the example file under assets folder 
-res: clearassets
-	@mkdir -p $(ASSETS) # -p prevents the error message if the directory exist
-	$(MAKE) -C src/assets assets run
+# - dep=clearres
+# - generate the example file under res folder 
+res: clearres
+	@mkdir -p $(RES) # -p prevents the error message if the directory exist
+	$(MAKE) -C src/res res run
 
 # test the program with the generated assets
-# - dep=assets bin
+# - dep=bin
 # - run the program with with the assets as arguments
-test: assets bin
+test: bin 
+	@echo "=========== TESTING ============"
+	./bin/server --name asd &
+	./bin/client --name asd --key lol --message miobellissimomessaggio --encode & 
+	./bin/client --name asd --key lol --message yxantxxxeexyabqehmsvua --decode &
+
+	
 
 #========== CLEANING TARGETS 
-# simply call clear bin and clear assets
-# - dep=clearbin clearassets
-clear: clearbin clearassets
+# simply call clear bin and clear res
+# - dep=clearbin clearres 
+clear: clearbin clearres clearobjs
 
 # check if bin directory exists. if true remove all its content, otherwhise
 # create will be create 
 clearbin :
 	if [ -d "$(BIN)" ]; then rm -rf $(BIN); fi
 
-# check if assets directory exists. if true remove all its content, otherwhise
+# check if res directory exists. if true remove all its content, otherwhise
 # create will be create 
-clearassets:
-	if [ -d "$(ASSETS)" ]; then rm -rf $(ASSETS); fi
+clearres:
+	if [ -d "$(RES)" ]; then rm -rf $(RES); fi
 
 # remove all the objects files in src/ folder
 clearobjs:

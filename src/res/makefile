@@ -26,16 +26,16 @@ default: description
 
 description:
 	echo "Makefile to compile the program assets generator. Usage:"
-	echo "> make assets -> compile the program wich generate ghe assets file."
+	echo "> make res    -> compile the program wich generate the assets file."
 	echo "> make clear  -> clear the old assets generator program"
 	echo "> make run    -> run the assets program generator."
 
-run: clear assets
-	./assets
+run: clear res  
+	./res
 
 clear:
-	$(RM) assets 
+	$(RM) res 
 
-assets: clear 
-	$(GCC) $(CFLAGS) assets.c -o assets 
+res: clear 
+	$(GCC) $(CFLAGS) res.c -o res
 
